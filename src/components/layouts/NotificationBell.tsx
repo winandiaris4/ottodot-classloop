@@ -30,7 +30,6 @@ export function NotificationBell() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const [unreadCount, setUnreadCount] = useState<number>(0)
   const [isOpen, setIsOpen] = useState(false)
-  const [hasLoaded, setHasLoaded] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   const loadNotifications = useCallback(async () => {
@@ -39,23 +38,20 @@ export function NotificationBell() {
       if (res.success) {
         setNotifications(res.notifications)
         setUnreadCount(res.unreadCount)
-        setHasLoaded(true)
       }
     } catch {
       // Graceful fallback
     }
   }, [])
 
-  // Lazy load on first open or lightweight background check
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open)
     if (open) {
       loadNotifications()
     }
-  };
+  }
 
   useEffect(() => {
-    // Initial fetch once after idle to not block initial LCP / render
     const timer = setTimeout(() => {
       loadNotifications()
     }, 1200)

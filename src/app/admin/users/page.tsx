@@ -5,7 +5,7 @@ import { UsersListTable } from './UsersListTable'
 export default async function AdminUsersPage() {
   const supabase = await createClient()
 
-  // Fetch all user profiles and parent-student links in parallel
+  // Fetch all user profiles and parent-student links in parallel (1 network roundtrip)
   const [
     { data: users = [] },
     { data: links = [] },
