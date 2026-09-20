@@ -203,3 +203,4 @@ CREATE INDEX IF NOT EXISTS idx_homework_due ON public.homework(due_at);
 CREATE INDEX IF NOT EXISTS idx_submissions_homework ON public.homework_submissions(homework_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_student ON public.homework_submissions(student_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_read ON public.notifications(user_id, is_read);
+
