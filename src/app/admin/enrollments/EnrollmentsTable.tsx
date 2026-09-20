@@ -213,3 +213,4 @@ export function EnrollmentsTable({ enrollments, students, classes }: Enrollments
     </div>
   )
 }
+

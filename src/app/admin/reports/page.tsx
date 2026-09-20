@@ -18,36 +18,33 @@ import {
 export default async function AdminReportsPage() {
   const supabase = await createClient()
 
-  // 1. Fetch Classes with teacher details
-  const { data: classes = [] } = await supabase
-    .from('classes')
-    .select('id, name, description, max_students, status, created_at, teacher:teacher_id(full_name)')
-    .order('name', { ascending: true })
-
-  // 2. Fetch Enrollments
-  const { data: enrollments = [] } = await supabase
-    .from('enrollments')
-    .select('id, class_id, student_id, status')
-
-  // 3. Fetch Homework assignments
-  const { data: homework = [] } = await supabase
-    .from('homework')
-    .select('id, class_id, title, max_score')
-
-  // 4. Fetch Submissions
-  const { data: submissions = [] } = await supabase
-    .from('homework_submissions')
-    .select(`
-      id,
-      score,
-      feedback,
-      submitted_at,
-      graded_at,
-      homework_id,
-      student:student_id(full_name),
-      homework:homework_id(title, class_id, max_score)
-    `)
-    .order('graded_at', { ascending: false })
+  // Execute all reporting queries in parallel (1 network roundtrip)
+  const [
+    { data: classes = [] },
+    { data: enrollments = [] },
+    { data: homework = [] },
+    { data: submissions = [] },
+  ] = await Promise.all([
+    supabase
+      .from('classes')
+      .select('id, name, description, max_students, status, created_at, teacher:teacher_id(full_name)')
+      .order('name', { ascending: true }),
+    supabase.from('enrollments').select('id, class_id, student_id, status'),
+    supabase.from('homework').select('id, class_id, title, max_score'),
+    supabase
+      .from('homework_submissions')
+      .select(`
+        id,
+        score,
+        feedback,
+        submitted_at,
+        graded_at,
+        homework_id,
+        student:student_id(full_name),
+        homework:homework_id(title, class_id, max_score)
+      `)
+      .order('graded_at', { ascending: false }),
+  ])
 
   const safeClasses = classes || []
   const safeEnrollments = enrollments || []

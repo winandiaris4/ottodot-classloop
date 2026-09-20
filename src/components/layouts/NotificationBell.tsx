@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useTransition } from 'react'
+import React, { useState, useEffect, useTransition, useCallback } from 'react'
 import {
   fetchNotificationsAction,
   markNotificationAsReadAction,
@@ -15,7 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
   Bell,
@@ -31,30 +30,44 @@ export function NotificationBell() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const [unreadCount, setUnreadCount] = useState<number>(0)
   const [isOpen, setIsOpen] = useState(false)
+  const [hasLoaded, setHasLoaded] = useState(false)
   const [isPending, startTransition] = useTransition()
 
-  // Load notifications on mount and whenever popover opens
-  const loadNotifications = async () => {
-    const res = await fetchNotificationsAction()
-    if (res.success) {
-      setNotifications(res.notifications)
-      setUnreadCount(res.unreadCount)
+  const loadNotifications = useCallback(async () => {
+    try {
+      const res = await fetchNotificationsAction()
+      if (res.success) {
+        setNotifications(res.notifications)
+        setUnreadCount(res.unreadCount)
+        setHasLoaded(true)
+      }
+    } catch {
+      // Graceful fallback
     }
-  }
+  }, [])
+
+  // Lazy load on first open or lightweight background check
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open)
+    if (open) {
+      loadNotifications()
+    }
+  };
 
   useEffect(() => {
-    loadNotifications()
-    // Poll every 30 seconds for background updates
-    const interval = setInterval(loadNotifications, 30000)
-    return () => clearInterval(interval)
-  }, [])
+    // Initial fetch once after idle to not block initial LCP / render
+    const timer = setTimeout(() => {
+      loadNotifications()
+    }, 1200)
+
+    return () => clearTimeout(timer)
+  }, [loadNotifications])
 
   const handleMarkAsRead = (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
     const formData = new FormData()
     formData.append('notificationId', id)
 
-    // Optimistic UI update
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
     )
@@ -67,7 +80,6 @@ export function NotificationBell() {
 
   const handleMarkAllAsRead = (e: React.MouseEvent) => {
     e.stopPropagation()
-    // Optimistic UI update
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })))
     setUnreadCount(0)
 
@@ -92,7 +104,7 @@ export function NotificationBell() {
   }
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger className="relative p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none">
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
@@ -102,7 +114,6 @@ export function NotificationBell() {
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80 sm:w-96 p-0 max-h-[460px] overflow-y-auto">
-        {/* Header */}
         <div className="p-3 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
           <div className="flex items-center gap-2">
             <span className="font-bold text-sm text-slate-900">Notifications</span>
@@ -123,7 +134,6 @@ export function NotificationBell() {
           )}
         </div>
 
-        {/* Notifications List */}
         <div className="divide-y divide-slate-100">
           {notifications.length === 0 ? (
             <div className="py-8 text-center text-slate-400 space-y-1">

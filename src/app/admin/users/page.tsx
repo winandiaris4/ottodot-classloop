@@ -5,21 +5,19 @@ import { UsersListTable } from './UsersListTable'
 export default async function AdminUsersPage() {
   const supabase = await createClient()
 
-  // Fetch all user profiles
-  const { data: users = [] } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  // Fetch parent student links with student user profiles
-  const { data: links = [] } = await supabase
-    .from('parent_student_links')
-    .select(`
+  // Fetch all user profiles and parent-student links in parallel
+  const [
+    { data: users = [] },
+    { data: links = [] },
+  ] = await Promise.all([
+    supabase.from('user_profiles').select('*').order('created_at', { ascending: false }),
+    supabase.from('parent_student_links').select(`
       id,
       parent_id,
       student_id,
       student:student_id(id, full_name)
-    `)
+    `),
+  ])
 
   const formattedLinks = (links || []).map((l: any) => ({
     id: l.id,

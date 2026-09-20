@@ -36,3 +36,4 @@ export const updateEnrollmentStatusSchema = z.object({
 })
 
 export type UpdateEnrollmentStatusInput = z.infer<typeof updateEnrollmentStatusSchema>
+

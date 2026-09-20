@@ -23,11 +23,20 @@ import {
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
 
-  // 1. Fetch Users
-  const { data: users = [] } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .order('created_at', { ascending: false })
+  // Execute all dashboard queries in parallel (1 network roundtrip)
+  const [
+    { data: users = [] },
+    { data: classes = [] },
+    { data: enrollments = [] },
+    { data: homework = [] },
+    { data: submissions = [] },
+  ] = await Promise.all([
+    supabase.from('user_profiles').select('*').order('created_at', { ascending: false }),
+    supabase.from('classes').select('id, name, status, created_at, teacher:teacher_id(full_name)').order('created_at', { ascending: false }),
+    supabase.from('enrollments').select('id, status, enrolled_at, student:student_id(full_name, id), class:class_id(name, id)').order('enrolled_at', { ascending: false }),
+    supabase.from('homework').select('id, max_score'),
+    supabase.from('homework_submissions').select('id, score, graded_at'),
+  ])
 
   const totalUsers = users?.length || 0
   const teachersCount = users?.filter((u) => u.role === 'teacher').length || 0
@@ -35,36 +44,8 @@ export default async function AdminDashboardPage() {
   const parentsCount = users?.filter((u) => u.role === 'parent').length || 0
   const adminsCount = users?.filter((u) => u.role === 'admin').length || 0
 
-  // 2. Fetch Classes
-  const { data: classes = [] } = await supabase
-    .from('classes')
-    .select('id, name, status, created_at, teacher:teacher_id(full_name)')
-    .order('created_at', { ascending: false })
-
   const activeClasses = classes?.filter((c) => c.status === 'active').length || 0
-
-  // 3. Fetch Enrollments
-  const { data: enrollments = [] } = await supabase
-    .from('enrollments')
-    .select(`
-      id,
-      status,
-      enrolled_at,
-      student:student_id(full_name, id),
-      class:class_id(name, id)
-    `)
-    .order('enrolled_at', { ascending: false })
-
   const activeEnrollments = enrollments?.filter((e) => e.status === 'active').length || 0
-
-  // 4. Fetch Homework & Submissions for Platform Metrics
-  const { data: homework = [] } = await supabase
-    .from('homework')
-    .select('id, max_score')
-
-  const { data: submissions = [] } = await supabase
-    .from('homework_submissions')
-    .select('id, score, graded_at')
 
   const totalHomework = homework?.length || 0
   const totalSubmissions = submissions?.length || 0

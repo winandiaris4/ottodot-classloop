@@ -5,33 +5,35 @@ import { EnrollmentsTable } from './EnrollmentsTable'
 export default async function AdminEnrollmentsPage() {
   const supabase = await createClient()
 
-  // 1. Fetch enrollments with student and class details
-  const { data: enrollments = [] } = await supabase
-    .from('enrollments')
-    .select(`
-      id,
-      status,
-      enrolled_at,
-      student_id,
-      class_id,
-      student:student_id(id, full_name),
-      class:class_id(id, name, max_students, teacher:teacher_id(full_name))
-    `)
-    .order('enrolled_at', { ascending: false })
-
-  // 2. Fetch all student profiles for dropdown
-  const { data: students = [] } = await supabase
-    .from('user_profiles')
-    .select('id, full_name')
-    .eq('role', 'student')
-    .order('full_name', { ascending: true })
-
-  // 3. Fetch all classes for dropdown
-  const { data: classes = [] } = await supabase
-    .from('classes')
-    .select('id, name, max_students')
-    .eq('status', 'active')
-    .order('name', { ascending: true })
+  // Fetch enrollments, students, and active classes in parallel (1 network roundtrip)
+  const [
+    { data: enrollments = [] },
+    { data: students = [] },
+    { data: classes = [] },
+  ] = await Promise.all([
+    supabase
+      .from('enrollments')
+      .select(`
+        id,
+        status,
+        enrolled_at,
+        student_id,
+        class_id,
+        student:student_id(id, full_name),
+        class:class_id(id, name, max_students, teacher:teacher_id(full_name))
+      `)
+      .order('enrolled_at', { ascending: false }),
+    supabase
+      .from('user_profiles')
+      .select('id, full_name')
+      .eq('role', 'student')
+      .order('full_name', { ascending: true }),
+    supabase
+      .from('classes')
+      .select('id, name, max_students')
+      .eq('status', 'active')
+      .order('name', { ascending: true }),
+  ])
 
   const formattedEnrollments = (enrollments || []).map((e: any) => ({
     id: e.id,
@@ -61,3 +63,4 @@ export default async function AdminEnrollmentsPage() {
     </div>
   )
 }
+

@@ -41,3 +41,4 @@ export async function sendEmail({
     return { success: false, error: err.message || 'Failed to dispatch email' }
   }
 }
+
