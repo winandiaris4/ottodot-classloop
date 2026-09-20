@@ -28,7 +28,7 @@
 | ID  | Status | Urgensi | Kategori | Judul Tugas | Deps |
 | --- | ------ | ------- | -------- | ----------- | ---- |
 | 001 | `DONE` | `HIGH` | `DevOps` | Project Setup: Init Next.js 15 + TypeScript + Tailwind v4 + Shadcn/ui | - |
-| 002 | `TODO` | `HIGH` | `Database` | Database Schema + Migrations (8 tabel utama + indexes) | 001 |
+| 002 | `DONE` | `HIGH` | `Database` | Database Schema + Migrations (8 tabel utama + indexes) | 001 |
 | 003 | `TODO` | `HIGH` | `Database` | RLS Policies + Supabase TypeScript Type Generation | 002 |
 | 004 | `TODO` | `HIGH` | `Backend` | Auth System: Login, Invite Flow, Middleware Role-based Routing | 003 |
 | 005 | `TODO` | `HIGH` | `Frontend` | Layout per Role: Sidebar, Header, Navigation + Dashboard Skeleton | 004 |
