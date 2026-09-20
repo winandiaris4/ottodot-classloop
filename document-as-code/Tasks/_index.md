@@ -35,7 +35,7 @@
 | 006 | `DONE` | `HIGH` | `Frontend` | Modul Teacher: Kelola Kelas, Buat Homework, Grade Submission | 004, 005 |
 | 007 | `DONE` | `HIGH` | `Frontend` | Modul Student: Homework List, Submit, Lihat Nilai & Feedback | 004, 005 |
 | 008 | `DONE` | `MEDIUM` | `Frontend` | Modul Parent: Dashboard Progress Anak, Grafik Nilai | 004, 005 |
-| 009 | `TODO` | `MEDIUM` | `Frontend` | Modul Admin: User Management, Link Parent-Student, Laporan | 004, 005 |
+| 009 | `DONE` | `MEDIUM` | `Frontend` | Modul Admin: User Management, Link Parent-Student, Laporan | 004, 005 |
 | 010 | `TODO` | `MEDIUM` | `Backend` | Notifikasi: In-app Notification + Email via Resend | 006, 007 |
 | 011 | `TODO` | `MEDIUM` | `Backend` | Self-serve Enrollment: Landing Page + Stripe Checkout + Webhook | 002, 004, 009 |
 | 012 | `DONE` | `HIGH` | `DevOps` | Seed Data & Demo Accounts (4 role, kelas, homework, submission) | 002, 003 |
