@@ -33,7 +33,7 @@
 | 004 | `DONE` | `HIGH` | `Backend` | Auth System: Login, Invite Flow, Middleware Role-based Routing | 003 |
 | 005 | `DONE` | `HIGH` | `Frontend` | Layout per Role: Sidebar, Header, Navigation + Dashboard Skeleton | 004 |
 | 006 | `DONE` | `HIGH` | `Frontend` | Modul Teacher: Kelola Kelas, Buat Homework, Grade Submission | 004, 005 |
-| 007 | `TODO` | `HIGH` | `Frontend` | Modul Student: Homework List, Submit, Lihat Nilai & Feedback | 004, 005 |
+| 007 | `DONE` | `HIGH` | `Frontend` | Modul Student: Homework List, Submit, Lihat Nilai & Feedback | 004, 005 |
 | 008 | `TODO` | `MEDIUM` | `Frontend` | Modul Parent: Dashboard Progress Anak, Grafik Nilai | 004, 005 |
 | 009 | `TODO` | `MEDIUM` | `Frontend` | Modul Admin: User Management, Link Parent-Student, Laporan | 004, 005 |
 | 010 | `TODO` | `MEDIUM` | `Backend` | Notifikasi: In-app Notification + Email via Resend | 006, 007 |

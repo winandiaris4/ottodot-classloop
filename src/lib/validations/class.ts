@@ -7,3 +7,4 @@ export const createClassSchema = z.object({
 })
 
 export type CreateClassInput = z.infer<typeof createClassSchema>
+

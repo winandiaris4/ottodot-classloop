@@ -17,3 +17,4 @@ export const gradeSubmissionSchema = z.object({
 
 export type CreateHomeworkInput = z.infer<typeof createHomeworkSchema>
 export type GradeSubmissionInput = z.infer<typeof gradeSubmissionSchema>
+
