@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAC Dashboard — Docs as Code</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Markdown & Mermaid Parsers -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script>
+    // Inisialisasi mermaid
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      securityLevel: 'loose',
+      themeVariables: {
+        background: '#1a1d2e',
+        primaryColor: '#7c3aed',
+        primaryTextColor: '#e8eaf6',
+        lineColor: '#555870'
+      }
+    });
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0d0f1a;
+      --bg-secondary: #141728;
+      --bg-card: #1a1d2e;
+      --bg-card-hover: #1f2338;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.14);
+      --text-primary: #e8eaf6;
+      --text-secondary: #8b8fa8;
+      --text-muted: #555870;
+
+      --purple: #7c3aed;
+      --purple-light: #a855f7;
+      --blue: #2563eb;
+      --blue-light: #60a5fa;
+      --green: #059669;
+      --green-light: #34d399;
+      --red: #dc2626;
+      --red-light: #f87171;
+      --amber: #d97706;
+      --amber-light: #fbbf24;
+
+      --todo-color: #a855f7;
+      --inprogress-color: #60a5fa;
+      --blocked-color: #f87171;
+      --done-color: #34d399;
+
+      --sidebar-width: 220px;
+      --header-height: 56px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ───────────────────────────────────────── */
+    header {
+      height: var(--header-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: 15px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #c084fc, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-sep { color: var(--text-muted); margin: 0 4px; }
+
+    .project-name {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .header-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .refresh-btn {
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.3);
+      color: var(--purple-light);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .refresh-btn:hover {
+      background: rgba(124,58,237,0.25);
+      border-color: rgba(124,58,237,0.5);
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green-light);
+      box-shadow: 0 0 6px var(--green-light);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ── Layout ───────────────────────────────────────── */
+    .app-body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ──────────────────────────────────────── */
+    aside {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-section {
+      padding: 0 12px;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0 8px;
+      margin-bottom: 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-secondary);
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.04);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: rgba(124,58,237,0.12);
+      border-color: rgba(124,58,237,0.2);
+      color: var(--purple-light);
+    }
+
+    .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+    .sidebar-stats {
+      margin-top: auto;
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ── Main ─────────────────────────────────────────── */
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    /* ── Stats Row ────────────────────────────────────── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: border-color 0.2s;
+    }
+
+    .stat-card:hover { border-color: var(--border-hover); }
+
+    .stat-label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
+    }
+
+    .stat-value.todo { color: var(--todo-color); }
+    .stat-value.inprogress { color: var(--inprogress-color); }
+    .stat-value.blocked { color: var(--blocked-color); }
+    .stat-value.done { color: var(--done-color); }
+
+    /* ── Kanban ───────────────────────────────────────── */
+    .kanban {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .kanban-col {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .kanban-col-header {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .col-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .col-title.todo { color: var(--todo-color); }
+    .col-title.inprogress { color: var(--inprogress-color); }
+    .col-title.blocked { color: var(--blocked-color); }
+    .col-title.done { color: var(--done-color); }
+
+    .col-count {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .col-count.todo { background: rgba(168,85,247,0.15); color: var(--todo-color); }
+    .col-count.inprogress { background: rgba(96,165,250,0.15); color: var(--inprogress-color); }
+    .col-count.blocked { background: rgba(248,113,113,0.15); color: var(--blocked-color); }
+    .col-count.done { background: rgba(52,211,153,0.15); color: var(--done-color); }
+
+    .kanban-cards {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 80px;
+    }
+
+    /* ── Task Card ────────────────────────────────────── */
+    .task-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .task-card:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-card-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+
+    .task-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .task-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .task-urgency {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .task-urgency.HIGH { background: rgba(220,38,38,0.2); color: #fca5a5; }
+    .task-urgency.MEDIUM { background: rgba(217,119,6,0.2); color: #fcd34d; }
+    .task-urgency.LOW { background: rgba(75,85,99,0.3); color: #9ca3af; }
+
+    .task-title {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .task-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .task-category {
+      font-size: 10px;
+      background: rgba(99,102,241,0.15);
+      color: #a5b4fc;
+      padding: 2px 8px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .task-progress {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .progress-bar-wrap {
+      flex: 1;
+      max-width: 60px;
+      height: 3px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--purple), var(--blue-light));
+      transition: width 0.5s ease;
+    }
+
+    .progress-text {
+      font-size: 9px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Dependency Graph ─────────────────────────────── */
+    .graph-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+    }
+
+    .graph-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .graph-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .graph-legend {
+      display: flex;
+      gap: 14px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    #dep-graph {
+      width: 100%;
+      min-height: 200px;
+      overflow: auto;
+    }
+
+    svg#dep-svg {
+      width: 100%;
+      min-height: 180px;
+    }
+
+    /* ── Empty State ──────────────────────────────────── */
+    .empty-col {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    /* ── Loading ──────────────────────────────────────── */
+    .loading {
+      text-align: center;
+      padding: 60px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--border);
+      border-top-color: var(--purple-light);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Modal ────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-hover);
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(16px);
+      transition: transform 0.2s;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 28px;
+      margin-top: 20px;
+    }
+
+    .modal-col-left {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-col-right {
+      border-left: 1px solid var(--border);
+      padding-left: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .detail-section {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .detail-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+
+    .detail-body {
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    /* Markdown Specific Styles */
+    .detail-body.markdown-mode {
+      white-space: normal;
+    }
+
+    .markdown-body h1, .markdown-body h2, .markdown-body h3 {
+      color: var(--text-primary);
+      margin-top: 18px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .markdown-body h1 { font-size: 18px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+    .markdown-body h2 { font-size: 15px; }
+    .markdown-body h3 { font-size: 13px; }
+    .markdown-body p { margin-bottom: 12px; color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
+    
+    .markdown-body ul, .markdown-body ol {
+      margin-left: 20px;
+      margin-bottom: 12px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    .markdown-body li { margin-bottom: 4px; }
+    
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 12px;
+      background: rgba(255,255,255,0.01);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .markdown-body th {
+      background: rgba(255,255,255,0.03);
+      padding: 10px 12px;
+      font-weight: 600;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+    .markdown-body td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .markdown-body tr:last-child td { border-bottom: none; }
+    
+    .markdown-body pre {
+      background: rgba(0, 0, 0, 0.2) !important;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      margin: 14px 0;
+    }
+    .markdown-body code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--purple-light);
+      background: rgba(124, 58, 237, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .markdown-body pre code {
+      background: transparent;
+      padding: 0;
+      color: var(--text-primary);
+    }
+    
+    .markdown-body blockquote {
+      border-left: 3px solid var(--purple);
+      padding-left: 14px;
+      margin: 14px 0;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    .modal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 12px;
+    }
+
+    .modal-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--purple-light);
+      margin-bottom: 4px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .modal-close {
+      background: rgba(255,255,255,0.07);
+      border: none;
+      color: var(--text-secondary);
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .modal-close:hover { background: rgba(255,255,255,0.12); }
+
+    .modal-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .meta-tag {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+
+    .meta-tag.status-todo { background: rgba(168,85,247,0.15); color: var(--todo-color); }
+    .meta-tag.status-in_progress { background: rgba(96,165,250,0.15); color: var(--inprogress-color); }
+    .meta-tag.status-blocked { background: rgba(248,113,113,0.15); color: var(--blocked-color); }
+    .meta-tag.status-done { background: rgba(52,211,153,0.15); color: var(--done-color); }
+    .meta-tag.urgency-high { background: rgba(220,38,38,0.15); color: #fca5a5; }
+    .meta-tag.urgency-medium { background: rgba(217,119,6,0.15); color: #fcd34d; }
+    .meta-tag.urgency-low { background: rgba(75,85,99,0.15); color: #9ca3af; }
+    .meta-tag.cat { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+
+    .modal-deps {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .dep-ids {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .dep-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 5px;
+      color: var(--text-secondary);
+    }
+
+    .progress-full {
+      margin-top: 16px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-full {
+      height: 5px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-full-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--purple), var(--blue-light));
+    }
+
+    /* Subtasks List in Modal */
+    .subtasks-list {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+    .subtask-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+    }
+    .subtask-check {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: var(--done-color);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .subtask-item.done .subtask-check {
+      border-color: var(--done-color);
+      background: rgba(52, 211, 153, 0.1);
+    }
+    .subtask-text {
+      color: var(--text-primary);
+    }
+    .subtask-item.done .subtask-text {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+    .subtask-verify {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Backlog Table Styles */
+    .backlog-table-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .backlog-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .backlog-table th {
+      text-align: left;
+      padding: 12px 16px;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .backlog-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+    .backlog-table tr:last-child td {
+      border-bottom: none;
+    }
+    .backlog-table tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+    .backlog-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      color: var(--purple-light);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ───────────────────────────────────────── -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">D</div>
+    <span class="logo-text">DAC</span>
+  </div>
+  <span class="header-sep">—</span>
+  <span class="project-name" id="project-name">Loading...</span>
+  <div class="header-right">
+    <div class="live-dot" title="Live from local files"></div>
+    <button class="refresh-btn" onclick="loadData()">↺ Refresh</button>
+  </div>
+</header>
+
+<!-- ── Body ─────────────────────────────────────────── -->
+<div class="app-body">
+
+  <!-- Sidebar -->
+  <aside>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Views</div>
+      <div class="nav-item active" onclick="showView('kanban')" id="nav-kanban">
+        <span class="nav-icon">⊞</span> Kanban Board
+      </div>
+      <div class="nav-item" onclick="showView('graph')" id="nav-graph">
+        <span class="nav-icon">⬡</span> Dependency Graph
+      </div>
+      <div class="nav-item" onclick="showView('specs')" id="nav-specs">
+        <span class="nav-icon">📁</span> Specs & Architecture
+      </div>
+      <div class="nav-item" onclick="showView('backlog')" id="nav-backlog">
+        <span class="nav-icon">📋</span> Backlog List
+      </div>
+      <div class="nav-item" onclick="showView('archive')" id="nav-archive">
+        <span class="nav-icon">🗄️</span> Archived Tasks
+      </div>
+      <div class="nav-item" onclick="showView('prompt-guide')" id="nav-prompt-guide">
+        <span class="nav-icon">💡</span> Prompt Guide
+      </div>
+    </div>
+
+    <div class="sidebar-stats" id="sidebar-stats">
+      Memuat data...
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    <div class="loading">
+      <div class="spinner"></div>
+      Membaca file dari /Tasks...
+    </div>
+  </main>
+</div>
+
+<!-- ── Modal ─────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-id" id="modal-id"></div>
+        <div class="modal-title" id="modal-title"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-meta" id="modal-meta"></div>
+
+    <div class="modal-grid">
+      <!-- Kiri: Analisis Teknis & Notes -->
+      <div class="modal-col-left">
+        <div class="detail-section" id="modal-analysis-section">
+          <div class="detail-title">🔍 Analisis Teknis</div>
+          <div class="detail-body" id="modal-analysis-body"></div>
+        </div>
+        <div class="detail-section" id="modal-notes-section">
+          <div class="detail-title">💬 Notes</div>
+          <div class="detail-body" id="modal-notes-body"></div>
+        </div>
+      </div>
+
+      <!-- Kanan: Progress, Deps, & Subtasks -->
+      <div class="modal-col-right">
+        <div id="modal-deps-section"></div>
+        <div id="modal-blocks-section"></div>
+        <div id="modal-ref-section"></div>
+        <div class="progress-full" id="modal-progress"></div>
+        <div id="modal-subtasks-section"></div>
+        <div id="modal-archive-section"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let allTasks = [];
+  let allBacklog = [];
+  let allArchive = [];
+  let allSpecs = [];
+  let promptGuideMd = '';
+  let currentView = 'kanban';
+
+  // ── Load Data ─────────────────────────────────────────
+  async function loadData() {
+    try {
+      const [tasksRes, briefRes, backlogRes, archiveRes, specsRes, promptGuideRes] = await Promise.all([
+        fetch('/api/tasks'),
+        fetch('/api/brief'),
+        fetch('/api/backlog'),
+        fetch('/api/archive'),
+        fetch('/api/specs'),
+        fetch('/api/prompt-guide'),
+      ]);
+      allTasks = await tasksRes.json();
+      const brief = await briefRes.json();
+      allBacklog = await backlogRes.json();
+      allArchive = await archiveRes.json();
+      allSpecs = await specsRes.json();
+      promptGuideMd = await promptGuideRes.text();
+
+      document.getElementById('project-name').textContent = brief.name !== '[Nama proyek kamu]' ? brief.name : 'Docs as Code';
+
+      updateSidebarStats();
+
+      if (currentView === 'kanban') renderKanban();
+      else if (currentView === 'graph') renderGraph();
+      else if (currentView === 'specs') renderSpecs();
+      else if (currentView === 'prompt-guide') renderPromptGuide();
+      else if (currentView === 'backlog') renderBacklog();
+      else renderArchive();
+    } catch (e) {
+      document.getElementById('main-content').innerHTML =
+        `<div class="loading">⚠️ Gagal memuat data.<br><small style="color:var(--text-muted)">Pastikan server berjalan dan folder Tasks/ ada.</small></div>`;
+    }
+  }
+
+  // ── Sidebar Stats ──────────────────────────────────────
+  function updateSidebarStats() {
+    const total = allTasks.length;
+    const done = allTasks.filter(t => t.status === 'DONE').length;
+    document.getElementById('sidebar-stats').innerHTML = `
+      <div style="margin-bottom:6px;font-weight:600;color:var(--text-secondary);font-size:12px;">${total} Tasks Total</div>
+      <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-bottom:8px;">
+        <div style="height:100%;width:${total ? Math.round((done/total)*100) : 0}%;background:linear-gradient(90deg,var(--purple),var(--blue-light));border-radius:3px;transition:width 0.5s;"></div>
+      </div>
+      <div style="font-size:10px;color:var(--text-muted);">${done}/${total} completed</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:6px;">📁 ${allSpecs.length} specs documents</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">📋 ${allBacklog.length} ideas in backlog</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">🗄️ ${allArchive.length} tasks in archive</div>
+    `;
+  }
+
+  // ── View Switching ─────────────────────────────────────
+  function showView(view) {
+    currentView = view;
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('nav-' + view).classList.add('active');
+    if (view === 'kanban') renderKanban();
+    else if (view === 'graph') renderGraph();
+    else if (view === 'specs') renderSpecs();
+    else if (view === 'prompt-guide') renderPromptGuide();
+    else if (view === 'backlog') renderBacklog();
+    else renderArchive();
+  }
+
+  // ── Render Kanban ──────────────────────────────────────
+  function renderKanban() {
+    const columns = ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'];
+    const colMeta = {
+      'TODO': { label: 'TODO', cls: 'todo' },
+      'IN_PROGRESS': { label: 'IN PROGRESS', cls: 'inprogress' },
+      'BLOCKED': { label: 'BLOCKED', cls: 'blocked' },
+      'DONE': { label: 'DONE', cls: 'done' },
+    };
+
+    const statsByStatus = {};
+    columns.forEach(c => statsByStatus[c] = allTasks.filter(t => t.status === c).length);
+
+    const statsHtml = columns.map(c => `
+      <div class="stat-card">
+        <div class="stat-label">${colMeta[c].label}</div>
+        <div class="stat-value ${colMeta[c].cls}">${statsByStatus[c]}</div>
+      </div>
+    `).join('');
+
+    const kanbanHtml = columns.map(col => {
+      const tasks = allTasks.filter(t => t.status === col);
+      const cardsHtml = tasks.length === 0
+        ? `<div class="empty-col">Tidak ada task</div>`
+        : tasks.map(t => taskCardHtml(t, col)).join('');
+
+      return `
+        <div class="kanban-col">
+          <div class="kanban-col-header">
+            <span class="col-title ${colMeta[col].cls}">${colMeta[col].label}</span>
+            <span class="col-count ${colMeta[col].cls}">${tasks.length}</span>
+          </div>
+          <div class="kanban-cards" ondragover="allowDrop(event)" ondrop="drop(event, '${col}')">${cardsHtml}</div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('main-content').innerHTML = `
+      <div>
+        <div class="section-title">Overview</div>
+        <div class="stats-row">${statsHtml}</div>
+      </div>
+      <div>
+        <div class="section-title">Kanban Board</div>
+        <div class="kanban">${kanbanHtml}</div>
+      </div>
+    `;
+  }
+
+  function taskCardHtml(t, col) {
+    const colClass = { TODO: 'todo', IN_PROGRESS: 'inprogress', BLOCKED: 'blocked', DONE: 'done' }[col] || 'todo';
+    return `
+      <div class="task-card" draggable="true" ondragstart="drag(event, '${t.id}')" onclick="openModal('${t.id}')">
+        <div class="task-card-header">
+          <span class="task-id">#${t.id}</span>
+          <span class="task-urgency ${t.urgency}">${t.urgency}</span>
+        </div>
+        <div class="task-title">${escHtml(t.title)}</div>
+        <div class="task-footer">
+          <span class="task-category">${escHtml(t.category)}</span>
+          ${t.subtasks.total > 0 ? `
+          <div class="task-progress">
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width:${t.progress}%"></div>
+            </div>
+            <span class="progress-text">${t.subtasks.done}/${t.subtasks.total}</span>
+          </div>` : ''}
+        </div>
+      </div>`;
+  }
+
+  // ── Render Dependency Graph ────────────────────────────
+  function renderGraph() {
+    const tasksWithDeps = allTasks.filter(t =>
+      (t.blocked_by && t.blocked_by.length > 0) ||
+      (t.blocks && t.blocks.length > 0)
+    );
+
+    if (tasksWithDeps.length === 0 && allTasks.length === 0) {
+      document.getElementById('main-content').innerHTML =
+        `<div class="loading">Tidak ada task ditemukan.</div>`;
+      return;
+    }
+
+    // Build all edges
+    const edges = [];
+    allTasks.forEach(t => {
+      if (t.blocked_by && t.blocked_by.length > 0) {
+        t.blocked_by.forEach(dep => {
+          // Normalisasi ID menjadi string 3 digit (misal: "002")
+          const cleanFrom = dep.toString().trim().padStart(3, '0');
+          const cleanTo = t.id.toString().trim().padStart(3, '0');
+          edges.push({ from: cleanFrom, to: cleanTo });
+        });
+      }
+    });
+
+    const nodesInGraph = new Set();
+    edges.forEach(e => { nodesInGraph.add(e.from); nodesInGraph.add(e.to); });
+
+    // Tampilkan semua task aktif di graf jika tidak ada dependensi khusus,
+    // untuk mempermudah visualisasi relasi
+    const nodesToShow = allTasks.filter(t => t.status !== 'DONE');
+
+    const colorsMap = { TODO: '#a855f7', IN_PROGRESS: '#60a5fa', BLOCKED: '#f87171', DONE: '#34d399' };
+
+    // Horizontal Layouting (Kiri ke Kanan)
+    const layers = buildLayers(nodesToShow, edges);
+    const nodePositions = computePositions(layers, nodesToShow);
+
+    // Hitung dimensi Canvas berdasarkan jumlah layer
+    const maxNodesInLayer = Math.max(...Object.values(layers).map(l => nodesToShow.filter(n => layers[n.id] === l).length), 1);
+    const layerCount = Math.max(...Object.values(layers), 0) + 1;
+
+    const W = Math.max(800, layerCount * 220);
+    const H = Math.max(300, maxNodesInLayer * 90);
+
+    const svgNodes = nodesToShow.map(t => {
+      const pos = nodePositions[t.id] || { x: 100, y: 100 };
+      const color = colorsMap[t.status] || '#8b8fa8';
+      const short = t.title.length > 18 ? t.title.slice(0, 17) + '…' : t.title;
+      return `
+        <g class="dep-node" onclick="openModal('${t.id}')" style="cursor:pointer">
+          <rect x="${pos.x - 70}" y="${pos.y - 25}" width="140" height="50" rx="8"
+            fill="#1a1d2e" stroke="${color}" stroke-width="2" />
+          <text x="${pos.x - 60}" y="${pos.y - 10}" text-anchor="start"
+            font-family="JetBrains Mono,monospace" font-size="9" fill="${color}" font-weight="bold">#${t.id}</text>
+          <text x="${pos.x - 60}" y="${pos.y + 10}" text-anchor="start"
+            font-family="Inter,sans-serif" font-size="10" fill="#e8eaf6" font-weight="500">${escHtml(short)}</text>
+          <text x="${pos.x + 60}" y="${pos.y - 10}" text-anchor="end"
+            font-family="Inter,sans-serif" font-size="8" fill="#555870" font-weight="600">${t.status}</text>
+        </g>`;
+    }).join('');
+
+    const svgEdges = edges.map(e => {
+      const from = nodePositions[e.from];
+      const to = nodePositions[e.to];
+      if (!from || !to) return '';
+      // Gambar garis horizontal dari sisi kanan node asal ke sisi kiri node tujuan
+      const startX = from.x + 70;
+      const startY = from.y;
+      const endX = to.x - 70;
+      const endY = to.y;
+      const controlX = startX + (endX - startX) / 2;
+      return `<path d="M${startX},${startY} C${controlX},${startY} ${controlX},${endY} ${endX},${endY}"
+        fill="none" stroke="rgba(168,85,247,0.4)" stroke-width="1.75" marker-end="url(#arrow)"/>`;
+    }).join('');
+
+    document.getElementById('main-content').innerHTML = `
+      <div class="graph-section">
+        <div class="graph-header">
+          <div class="graph-title">⬡ Task Dependency Graph (Timeline Flow)</div>
+          <div class="graph-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div>TODO</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>IN PROGRESS</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>BLOCKED</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>DONE</div>
+          </div>
+        </div>
+        <div id="dep-graph" style="overflow: auto;">
+          <svg id="dep-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="background: #0d0f1a; border-radius: 10px;">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5"
+                markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="rgba(168,85,247,0.7)"/>
+              </marker>
+            </defs>
+            ${svgEdges}
+            ${svgNodes}
+          </svg>
+        </div>
+        ${edges.length === 0 ? '<p style="text-align:center;color:var(--text-muted);font-size:12px;margin-top:12px;">Belum ada dependensi aktif di luar task DONE. Isi kolom <code>blocked_by</code> di front matter untuk menampilkan alur dependensi.</p>' : ''}
+      </div>
+    `;
+  }
+
+  function buildLayers(nodes, edges) {
+    const layers = {};
+    const inDegree = {};
+    nodes.forEach(n => {
+      layers[n.id] = 0;
+      inDegree[n.id] = 0;
+    });
+
+    edges.forEach(e => {
+      if (inDegree[e.to] !== undefined) inDegree[e.to]++;
+    });
+
+    let queue = nodes.filter(n => inDegree[n.id] === 0).map(n => n.id);
+    let visited = new Set();
+
+    while (queue.length > 0) {
+      const current = queue.shift();
+      visited.add(current);
+
+      const nextEdges = edges.filter(e => e.from === current);
+      nextEdges.forEach(e => {
+        if (layers[e.to] !== undefined) {
+          // Layer tujuan adalah layer asal + 1
+          layers[e.to] = Math.max(layers[e.to], layers[current] + 1);
+          if (!visited.has(e.to) && !queue.includes(e.to)) {
+            queue.push(e.to);
+          }
+        }
+      });
+    }
+
+    return layers;
+  }
+
+  function computePositions(layers, nodes) {
+    const byLayer = {};
+    nodes.forEach(n => {
+      const l = layers[n.id] || 0;
+      if (!byLayer[l]) byLayer[l] = [];
+      byLayer[l].push(n.id);
+    });
+
+    const positions = {};
+    const layerCount = Math.max(...Object.values(layers), 0) + 1;
+
+    Object.keys(byLayer).forEach(l => {
+      const ids = byLayer[l].sort();
+      const count = ids.length;
+      ids.forEach((id, i) => {
+        // Letakkan X berdasarkan layernya, dan Y merata secara vertikal
+        positions[id] = {
+          x: 100 + parseInt(l) * 220,
+          y: 60 + i * 80 + (i * 10),
+        };
+      });
+    });
+
+    return positions;
+  }
+
+  // ── Modal ─────────────────────────────────────────────
+  function openModal(id) {
+    const t = allTasks.find(t => t.id === id);
+    if (!t) return;
+
+    // Pastikan layout modal kembali ke 2 kolom untuk task normal
+    const modalGrid = document.querySelector('.modal-grid');
+    if (modalGrid) modalGrid.style.gridTemplateColumns = '1.2fr 1fr';
+    
+    const colRight = document.querySelector('.modal-col-right');
+    if (colRight) {
+      colRight.style.display = 'flex';
+      colRight.style.borderLeft = '1px solid var(--border)';
+      colRight.style.paddingLeft = '28px';
+    }
+
+    document.getElementById('modal-id').textContent = `Task #${t.id}`;
+    document.getElementById('modal-title').textContent = t.title;
+
+    const statusCls = `status-${t.status.toLowerCase().replace('_', '-')}`;
+    const urgencyCls = `urgency-${t.urgency.toLowerCase()}`;
+    document.getElementById('modal-meta').innerHTML = `
+      <span class="meta-tag ${statusCls}">${t.status.replace('_', ' ')}</span>
+      <span class="meta-tag ${urgencyCls}">⚡ ${t.urgency}</span>
+      <span class="meta-tag cat">📁 ${escHtml(t.category)}</span>
+      ${t.created_at ? `<span class="meta-tag" style="background:rgba(255,255,255,0.05);color:var(--text-muted)">📅 ${t.created_at}</span>` : ''}
+    `;
+
+    const depsSection = t.blocked_by.length > 0
+      ? `<div class="modal-deps" style="margin-bottom:10px;">🔒 Blocked by: <div class="dep-ids" style="margin-top:5px;">${t.blocked_by.map(d => `<span class="dep-badge">#${d}</span>`).join('')}</div></div>`
+      : '';
+    const blocksSection = t.blocks.length > 0
+      ? `<div class="modal-deps" style="margin-bottom:10px;">🔓 Blocks: <div class="dep-ids" style="margin-top:5px;">${t.blocks.map(d => `<span class="dep-badge">#${d}</span>`).join('')}</div></div>`
+      : '';
+
+    document.getElementById('modal-deps-section').innerHTML = depsSection;
+    document.getElementById('modal-blocks-section').innerHTML = blocksSection;
+
+    // Populasikan Analisis Teknis (Kiri)
+    const analysisSection = document.getElementById('modal-analysis-section');
+    if (t.details && t.details.analysis) {
+      analysisSection.style.display = 'block';
+      analysisSection.querySelector('.detail-title').innerHTML = "🔍 Analisis Teknis";
+      const body = document.getElementById('modal-analysis-body');
+      body.classList.remove('markdown-mode');
+      body.textContent = t.details.analysis;
+    } else {
+      analysisSection.style.display = 'none';
+    }
+
+    // Populasikan Notes (Kiri)
+    if (t.details && t.details.notes) {
+      document.getElementById('modal-notes-section').style.display = 'block';
+      document.getElementById('modal-notes-body').textContent = t.details.notes;
+    } else {
+      document.getElementById('modal-notes-section').style.display = 'none';
+    }
+
+    // Populasikan Referenced Files (Kanan)
+    if (t.details && t.details.refFiles) {
+      document.getElementById('modal-ref-section').innerHTML = `
+        <div class="modal-deps" style="margin-bottom:10px;">
+          📎 Referenced Files:
+          <div class="dep-ids" style="margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary)">
+            ${t.details.refFiles.split('\n').map(line => `<div>${escHtml(line.replace(/^-\s*/, ''))}</div>`).join('')}
+          </div>
+        </div>
+      `;
+    } else {
+      document.getElementById('modal-ref-section').innerHTML = '';
+    }
+
+    document.getElementById('modal-progress').innerHTML = t.subtasks.total > 0 ? `
+      <div class="progress-label">
+        <span>Sub-tasks Progress</span>
+        <span>${t.subtasks.done}/${t.subtasks.total} (${t.progress}%)</span>
+      </div>
+      <div class="progress-bar-full">
+        <div class="progress-bar-full-fill" style="width:${t.progress}%"></div>
+      </div>
+    ` : '';
+
+    // Render Subtasks List
+    if (t.subtasks.items && t.subtasks.items.length > 0) {
+      const itemsHtml = t.subtasks.items.map((item, index) => `
+        <div class="subtask-item ${item.done ? 'done' : ''}" style="cursor: pointer;" onclick="toggleSubtask('${t.id}', ${index}, ${!item.done})">
+          <div class="subtask-check">${item.done ? '✓' : ''}</div>
+          <div>
+            <div class="subtask-text">${escHtml(item.text)}</div>
+            ${item.verification ? `<span class="subtask-verify">🔍 Verification: ${escHtml(item.verification)}</span>` : ''}
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('modal-subtasks-section').innerHTML = `
+        <div class="subtasks-list">
+          <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Sub-tasks Checklist</div>
+          ${itemsHtml}
+        </div>
+      `;
+    } else {
+      document.getElementById('modal-subtasks-section').innerHTML = '';
+    }
+
+    // Render Archive Section
+    const archiveSection = document.getElementById('modal-archive-section');
+    if (t.status === 'DONE') {
+      archiveSection.innerHTML = `
+        <div class="detail-section" style="border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.02); margin-top:20px;">
+          <div class="detail-title" style="color: var(--done-color); border-bottom-color: rgba(52,211,153,0.2);">🗄️ Archive Task (Finish)</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <p style="font-size:12px; color:var(--text-secondary); margin-bottom:4px;">Task ini sudah DONE. Anda dapat mengarsipkannya dengan mengisi form post-mortem berikut:</p>
+            <div>
+              <label style="font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:4px;">Masalah (Problem)</label>
+              <textarea id="archive-problem" style="width:100%; background:var(--bg-primary); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); padding:6px; font-size:12px; font-family:inherit; resize:vertical;" rows="2"></textarea>
+            </div>
+            <div>
+              <label style="font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:4px;">Solusi (Solution)</label>
+              <textarea id="archive-solution" style="width:100%; background:var(--bg-primary); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); padding:6px; font-size:12px; font-family:inherit; resize:vertical;" rows="2"></textarea>
+            </div>
+            <div>
+              <label style="font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:4px;">Commit Hash</label>
+              <input type="text" id="archive-commit" style="width:100%; background:var(--bg-primary); border:1px solid var(--border); border-radius:6px; color:var(--text-primary); padding:6px; font-size:12px; font-family:inherit;" placeholder="e.g. 9f448a1"/>
+            </div>
+            <button onclick="submitArchive('${t.id}')" style="background:var(--green); color:white; border:none; padding:8px 14px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; transition:background 0.2s; align-self:flex-start;">
+              Archive & Generate Post-Mortem
+            </button>
+          </div>
+        </div>
+      `;
+      // Pre-fill fields
+      document.getElementById('archive-problem').value = t.title;
+      document.getElementById('archive-solution').value = t.details && t.details.notes ? t.details.notes : 'Fitur berhasil diimplementasikan dan diverifikasi.';
+    } else {
+      archiveSection.innerHTML = '';
+    }
+
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeModal(e) {
+    if (e && e.target !== document.getElementById('modal-overlay')) return;
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('modal-overlay').classList.remove('open'); });
+
+  // ── Render Backlog ────────────────────────────────────
+  function renderBacklog() {
+    if (allBacklog.length === 0) {
+      document.getElementById('main-content').innerHTML = `
+        <div class="backlog-table-wrap">
+          <div style="text-align:center;color:var(--text-muted);padding:40px 0;">
+            Tidak ada ide di backlog.
+          </div>
+        </div>`;
+      return;
+    }
+
+    const rowsHtml = allBacklog.map(item => `
+      <tr>
+        <td class="backlog-id">#${escHtml(item.id)}</td>
+        <td style="font-weight:500; min-width: 180px;">${escHtml(item.title)}</td>
+        <td><span class="task-category">${escHtml(item.category)}</span></td>
+        <td><span class="task-urgency ${item.urgency}">${escHtml(item.urgency)}</span></td>
+        <td style="color:var(--text-secondary); min-width: 300px; white-space: normal; word-break: break-word; line-height: 1.5; padding: 12px 8px;">
+          ${escHtml(item.notes)}
+        </td>
+      </tr>
+    `).join('');
+
+    document.getElementById('main-content').innerHTML = `
+      <div>
+        <div class="section-title">Backlog List</div>
+        <div class="backlog-table-wrap">
+          <table class="backlog-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">ID</th>
+                <th>Judul Ide / Fitur</th>
+                <th style="width: 120px;">Kategori</th>
+                <th style="width: 100px;">Urgensi</th>
+                <th>Catatan / Keterangan</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  // ── Render Archive ────────────────────────────────────
+  function renderArchive() {
+    if (allArchive.length === 0) {
+      document.getElementById('main-content').innerHTML = `
+        <div class="backlog-table-wrap">
+          <div style="text-align:center;color:var(--text-muted);padding:40px 0;">
+            Tidak ada task di arsip.
+          </div>
+        </div>`;
+      return;
+    }
+
+    const rowsHtml = allArchive.map(item => `
+      <tr>
+        <td class="backlog-id">#${escHtml(item.id)}</td>
+        <td style="font-weight:600; color: var(--green-light); width: 100px;">[POST-MORTEM]</td>
+        <td style="color:var(--text-primary); font-weight:500;">${escHtml(item.problem)}</td>
+        <td style="color:var(--text-secondary);">${escHtml(item.solution)}</td>
+        <td style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--purple-light); width:100px;">
+          ${escHtml(item.commit)}
+        </td>
+      </tr>
+    `).join('');
+
+    document.getElementById('main-content').innerHTML = `
+      <div>
+        <div class="section-title">Archived Tasks (History)</div>
+        <div class="backlog-table-wrap">
+          <table class="backlog-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">ID</th>
+                <th style="width: 120px;">Tipe</th>
+                <th style="width: 30%; font-weight:600;">Masalah</th>
+                <th style="font-weight:600;">Solusi & Dampak</th>
+                <th style="width: 120px;">Commit</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  // ── Render Specs ──────────────────────────────────────
+  function renderSpecs() {
+    if (allSpecs.length === 0) {
+      document.getElementById('main-content').innerHTML = `
+        <div class="backlog-table-wrap">
+          <div style="text-align:center;color:var(--text-muted);padding:40px 0;">
+            Tidak ada dokumen spesifikasi di Specs/.
+          </div>
+        </div>`;
+      return;
+    }
+
+    const typeBadges = {
+      SYSTEM_DESIGN: 'urgency-high',
+      FEATURE: 'urgency-medium',
+      SECURITY: 'urgency-low',
+      QA: 'status-inprogress',
+      INFRA: 'status-todo',
+      OTHER: 'status-blocked'
+    };
+
+    const statusBadges = {
+      DRAFT: 'status-todo',
+      IN_REVIEW: 'status-inprogress',
+      APPROVED: 'status-done',
+      SUPERSEDED: 'status-blocked'
+    };
+
+    const cardsHtml = allSpecs.map(s => {
+      const typeCls = typeBadges[s.type] || 'status-blocked';
+      const statusCls = statusBadges[s.status] || 'status-todo';
+      return `
+        <div class="task-card" onclick="openSpecModal('${s.filename}')" style="min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div class="task-card-header">
+            <span class="task-id">#${escHtml(s.id)}</span>
+            <span class="task-urgency ${typeCls}" style="text-transform: capitalize;">${s.type.replace('_', ' ')}</span>
+          </div>
+          <div class="task-title" style="margin: 10px 0; font-size: 14px; font-weight: 600;">${escHtml(s.title)}</div>
+          <div class="task-footer" style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+            <span class="meta-tag ${statusCls}" style="padding: 2px 6px; border-radius: 4px; font-size: 10px;">${s.status}</span>
+            <span style="color: var(--text-muted); font-size: 10px;">👤 ${escHtml(s.author || 'System')}</span>
+          </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('main-content').innerHTML = `
+      <div>
+        <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Specs & System Design</span>
+          <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">Folder: /Specs</span>
+        </div>
+        <div class="kanban" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
+          ${cardsHtml}
+        </div>
+      </div>
+    `;
+  }
+
+  // ── Open Spec Modal ───────────────────────────────────
+  function openSpecModal(filename) {
+    const s = allSpecs.find(spec => spec.filename === filename);
+    if (!s) return;
+
+    // Paksa modal grid menjadi 1 kolom penuh untuk specs
+    const modalGrid = document.querySelector('.modal-grid');
+    if (modalGrid) modalGrid.style.gridTemplateColumns = '1fr';
+    
+    const colRight = document.querySelector('.modal-col-right');
+    if (colRight) {
+      colRight.style.display = 'none';
+    }
+
+    document.getElementById('modal-id').textContent = `Specs #${s.id}`;
+    document.getElementById('modal-title').textContent = s.title;
+
+    const statusCls = `status-${s.status.toLowerCase().replace('_', '-')}`;
+    const typeCls = `urgency-${s.type.toLowerCase().replace('_', '-')}`;
+    
+    document.getElementById('modal-meta').innerHTML = `
+      <span class="meta-tag ${statusCls}">${s.status}</span>
+      <span class="meta-tag ${typeCls}">⚙️ ${s.type.replace('_', ' ')}</span>
+      <span class="meta-tag cat">👤 ${escHtml(s.author || 'System')}</span>
+      ${s.created_at ? `<span class="meta-tag" style="background:rgba(255,255,255,0.05);color:var(--text-muted)">📅 ${s.created_at}</span>` : ''}
+    `;
+
+    // Kita render markdown di area Kiri (Analisis) dan sembunyikan kolom kanan
+    const analysisSection = document.getElementById('modal-analysis-section');
+    analysisSection.style.display = 'block';
+    
+    const analysisBody = document.getElementById('modal-analysis-body');
+    analysisBody.classList.add('markdown-mode');
+    analysisBody.innerHTML = `
+      <div class="markdown-body" style="line-height: 1.6; color: var(--text-primary);">
+        ${marked.parse(s.content)}
+      </div>
+    `;
+    
+    // Ubah judul detail-title menjadi "Content"
+    analysisSection.querySelector('.detail-title').innerHTML = "📄 Document Content";
+
+    // Sembunyikan field task-specific
+    document.getElementById('modal-notes-section').style.display = 'none';
+    document.getElementById('modal-ref-section').innerHTML = '';
+    document.getElementById('modal-progress').innerHTML = '';
+    document.getElementById('modal-subtasks-section').innerHTML = '';
+    document.getElementById('modal-deps-section').innerHTML = '';
+    document.getElementById('modal-blocks-section').innerHTML = '';
+
+    // Cari element-element code block mermaid dan render dengan mermaid.js
+    setTimeout(() => {
+      const codeBlocks = document.querySelectorAll('.markdown-body pre code.language-mermaid, .markdown-body pre code.mermaid');
+      
+      if (codeBlocks.length > 0 && typeof mermaid === 'undefined') {
+        codeBlocks.forEach(block => {
+          const warnDiv = document.createElement('div');
+          warnDiv.innerHTML = `<span style="color:var(--amber-light); font-size:11px;">💡 Hubungkan ke internet untuk me-render diagram Mermaid ini secara visual.</span>`;
+          warnDiv.style.marginTop = '8px';
+          block.parentElement.appendChild(warnDiv);
+        });
+        return;
+      }
+
+      codeBlocks.forEach((block, index) => {
+        const rawMermaid = block.innerText;
+        const parent = block.parentElement;
+        const containerId = `mermaid-container-${index}`;
+        
+        // Buat div pembungkus diagram
+        const div = document.createElement('div');
+        div.id = containerId;
+        div.className = 'mermaid';
+        div.style.background = 'var(--bg-primary)';
+        div.style.padding = '20px';
+        div.style.borderRadius = '10px';
+        div.style.border = '1px solid var(--border)';
+        div.style.marginTop = '15px';
+        div.style.display = 'flex';
+        div.style.justifyContent = 'center';
+        
+        // Ganti pre-code block dengan div mermaid
+        parent.replaceWith(div);
+        
+        try {
+          mermaid.render(`mermaid-svg-${index}`, rawMermaid, (svgCode) => {
+            div.innerHTML = svgCode;
+          });
+        } catch (err) {
+          div.innerHTML = `<span style="color:var(--red-light); font-size:12px;">⚠️ Gagal render diagram Mermaid.</span>`;
+          console.error(err);
+        }
+      });
+    }, 50);
+
+    // Buka Modal Overlay
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  // ── Render Prompt Guide ────────────────────────────────
+  function renderPromptGuide() {
+    if (!promptGuideMd) {
+      document.getElementById('main-content').innerHTML = `
+        <div class="backlog-table-wrap">
+          <div style="text-align:center;color:var(--text-muted);padding:40px 0;">
+            Tidak ada konten prompt guide ditemukan.
+          </div>
+        </div>`;
+      return;
+    }
+
+    document.getElementById('main-content').innerHTML = `
+      <div style="max-width: 900px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 32px;">
+        <div class="section-title" style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:24px;">
+          <span>💡 AI Agent Prompt Guide</span>
+          <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">File: PROMPT_GUIDE.md</span>
+        </div>
+        <div class="markdown-body" style="line-height: 1.6; color: var(--text-primary);">
+          ${marked.parse(promptGuideMd)}
+        </div>
+      </div>
+    `;
+
+    // Render diagram Mermaid jika ada di Prompt Guide
+    setTimeout(() => {
+      const codeBlocks = document.querySelectorAll('#main-content .markdown-body pre code.language-mermaid, #main-content .markdown-body pre code.mermaid');
+      
+      if (codeBlocks.length > 0 && typeof mermaid === 'undefined') {
+        codeBlocks.forEach(block => {
+          const warnDiv = document.createElement('div');
+          warnDiv.innerHTML = `<span style="color:var(--amber-light); font-size:11px;">💡 Hubungkan ke internet untuk me-render diagram Mermaid ini secara visual.</span>`;
+          warnDiv.style.marginTop = '8px';
+          block.parentElement.appendChild(warnDiv);
+        });
+        return;
+      }
+
+      codeBlocks.forEach((block, index) => {
+        const rawMermaid = block.innerText;
+        const parent = block.parentElement;
+        const containerId = `prompt-mermaid-container-${index}`;
+        
+        const div = document.createElement('div');
+        div.id = containerId;
+        div.className = 'mermaid';
+        div.style.background = 'var(--bg-primary)';
+        div.style.padding = '20px';
+        div.style.borderRadius = '10px';
+        div.style.border = '1px solid var(--border)';
+        div.style.marginTop = '15px';
+        div.style.display = 'flex';
+        div.style.justifyContent = 'center';
+        
+        parent.replaceWith(div);
+        
+        try {
+          mermaid.render(`prompt-mermaid-svg-${index}`, rawMermaid, (svgCode) => {
+            div.innerHTML = svgCode;
+          });
+        } catch (err) {
+          div.innerHTML = `<span style="color:var(--red-light); font-size:12px;">⚠️ Gagal render diagram Mermaid.</span>`;
+          console.error(err);
+        }
+      });
+    }, 50);
+  }
+
+  // ── Init ──────────────────────────────────────────────
+  loadData();
+  // Auto-refresh every 10 seconds
+  setInterval(loadData, 10000);
+
+  // ── Drag & Drop Handlers ──────────────────────────────
+  function allowDrop(ev) {
+    ev.preventDefault();
+  }
+
+  function drag(ev, taskId) {
+    ev.dataTransfer.setData("text/plain", taskId);
+  }
+
+  async function drop(ev, newStatus) {
+    ev.preventDefault();
+    const taskId = ev.dataTransfer.getData("text/plain");
+    
+    const task = allTasks.find(t => t.id === taskId);
+    if (!task || task.status === newStatus) return;
+
+    try {
+      const response = await fetch(`/api/tasks/${taskId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (response.ok) {
+        task.status = newStatus;
+        loadData();
+      } else {
+        alert("Gagal memperbarui status task.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Error saat mengirim data ke server.");
+    }
+  }
+
+  // ── Interactive Checklist ─────────────────────────────
+  async function toggleSubtask(taskId, index, newDone) {
+    try {
+      const response = await fetch(`/api/tasks/${taskId}/subtasks/${index}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ done: newDone }),
+      });
+      if (response.ok) {
+        await loadData();
+        openModal(taskId);
+      } else {
+        alert("Gagal memperbarui checklist subtask.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Error saat mengirim data ke server.");
+    }
+  }
+
+  // ── Archive Form Submission ───────────────────────────
+  async function submitArchive(taskId) {
+    const problem = document.getElementById('archive-problem').value.trim();
+    const solution = document.getElementById('archive-solution').value.trim();
+    const commitHash = document.getElementById('archive-commit').value.trim() || 'N/A';
+
+    if (!problem || !solution) {
+      alert("Harap isi bidang Masalah dan Solusi.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/tasks/${taskId}/archive`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          problem: problem,
+          solution: solution,
+          commit_hash: commitHash
+        }),
+      });
+      if (response.ok) {
+        closeModal();
+        loadData();
+      } else {
+        alert("Gagal mengarsipkan task.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Error saat mengirim data ke server.");
+    }
+  }
+
+  // ── Utils ─────────────────────────────────────────────
+  function escHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+# .gitignore
+
+# ── Environment ──────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.venv/
+dashboard/.venv/
+__pycache__/
+
+# ── Dependencies ─────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Python ────────────────────────────────────────────────
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+
+# ── Build Output ─────────────────────────────────────────
+.next/
+out/
+dist/
+build/
+
+# ── System ───────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Logs ─────────────────────────────────────────────────
+*.log
+npm-debug.log*
+
+# ── Internal AI & Task Management ────────────────────────
+# Uncomment baris di bawah jika Tasks/ tidak perlu di-track oleh tim
+# (uncomment jika Tasks/ hanya untuk lokal, bukan kolaborasi tim)
+# Tasks/
+# .agents/

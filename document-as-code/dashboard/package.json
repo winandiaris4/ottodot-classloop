@@ -1,0 +1,12 @@
+{
+  "name": "dac-dashboard",
+  "version": "2.0.0",
+  "description": "DAC — Document-as-Code local dashboard",
+  "scripts": {
+    "start": "../.venv/bin/uvicorn main:app --reload --port 3737",
+    "dev": "../.venv/bin/uvicorn main:app --reload --port 3737",
+    "scan": "../.venv/bin/python scanner.py",
+    "scan:write": "../.venv/bin/python scanner.py --write",
+    "install:py": "python3 -m venv ../.venv && ../.venv/bin/pip install -r requirements.txt"
+  }
+}
