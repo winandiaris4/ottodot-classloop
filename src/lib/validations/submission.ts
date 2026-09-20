@@ -7,3 +7,4 @@ export const submitHomeworkSchema = z.object({
 })
 
 export type SubmitHomeworkInput = z.infer<typeof submitHomeworkSchema>
+

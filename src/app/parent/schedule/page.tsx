@@ -2,26 +2,36 @@ import React from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, Clock, Video, BookOpen, ArrowRight, User } from 'lucide-react'
+import { Calendar, Clock, ArrowLeft, User, Video, Users } from 'lucide-react'
 
-export default async function StudentSchedulePage() {
+export default async function ParentSchedulePage() {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // 1. Fetch Enrolled Class IDs
-  const { data: enrollments } = await supabase
-    .from('enrollments')
-    .select('class_id')
-    .eq('student_id', user?.id || '')
-    .eq('status', 'active')
+  // 1. Fetch Linked Children
+  const { data: parentLinks } = await supabase
+    .from('parent_student_links')
+    .select('student_id')
+    .eq('parent_id', user?.id || '')
 
-  const enrolledClassIds = enrollments?.map((e) => e.class_id) || []
+  const childIds = parentLinks?.map((l) => l.student_id) || []
 
-  // 2. Fetch Sessions
+  // 2. Fetch Enrolled Class IDs
+  let classIds: string[] = []
+  if (childIds.length > 0) {
+    const { data: enrollments } = await supabase
+      .from('enrollments')
+      .select('class_id')
+      .in('student_id', childIds)
+      .eq('status', 'active')
+
+    classIds = enrollments?.map((e) => e.class_id) || []
+  }
+
+  // 3. Fetch Class Sessions
   let sessions: Array<{
     id: string
     starts_at: string
@@ -31,7 +41,7 @@ export default async function StudentSchedulePage() {
     teacherName: string
   }> = []
 
-  if (enrolledClassIds.length > 0) {
+  if (classIds.length > 0) {
     const { data: sessionData } = await supabase
       .from('class_sessions')
       .select(`
@@ -41,7 +51,7 @@ export default async function StudentSchedulePage() {
           teacher:teacher_id (full_name)
         )
       `)
-      .in('class_id', enrolledClassIds)
+      .in('class_id', classIds)
       .order('starts_at', { ascending: true })
 
     if (sessionData) {
@@ -52,7 +62,7 @@ export default async function StudentSchedulePage() {
           starts_at: s.starts_at,
           ends_at: s.ends_at,
           notes: s.notes,
-          className: classObj?.name || 'Live Class',
+          className: classObj?.name || 'Class',
           teacherName: classObj?.teacher?.full_name || 'Instructor',
         }
       })
@@ -62,28 +72,34 @@ export default async function StudentSchedulePage() {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900">Live Class Schedule</h2>
-        <p className="text-xs text-slate-500 mt-0.5">
-          View your upcoming interactive sessions, lab times, and live experiment dates.
+      <div className="space-y-1">
+        <Link
+          href="/parent/dashboard"
+          className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors mb-1"
+        >
+          <ArrowLeft className="w-3.5 h-3.5 mr-1" /> Back to Dashboard
+        </Link>
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900">Family Class Schedule</h2>
+        <p className="text-xs text-slate-500">
+          Upcoming live classes and virtual sessions for your enrolled children.
         </p>
       </div>
 
-      {/* Schedule Timeline Grid */}
+      {/* Schedule List */}
       {sessions.length > 0 ? (
         <div className="space-y-4">
           {sessions.map((session) => {
             const startDate = new Date(session.starts_at)
             const endDate = new Date(session.ends_at)
-            const isPast = endDate < new Date()
             const isToday = startDate.toDateString() === new Date().toDateString()
+            const isPast = endDate < new Date()
 
             return (
               <Card
                 key={session.id}
                 className={`border transition-colors ${
                   isToday
-                    ? 'border-indigo-300 bg-indigo-50/30 ring-1 ring-indigo-400/40'
+                    ? 'border-amber-300 bg-amber-50/30 ring-1 ring-amber-400/40'
                     : isPast
                     ? 'border-slate-200 bg-slate-50/60 opacity-80'
                     : 'border-slate-200/80 bg-white'
@@ -91,9 +107,8 @@ export default async function StudentSchedulePage() {
               >
                 <CardContent className="p-5">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    {/* Left: Date Badge & Details */}
                     <div className="flex items-start gap-4">
-                      <div className="w-14 h-14 rounded-xl bg-indigo-100 border border-indigo-200 text-indigo-800 flex flex-col items-center justify-center shrink-0">
+                      <div className="w-14 h-14 rounded-xl bg-amber-100 border border-amber-200 text-amber-900 flex flex-col items-center justify-center shrink-0">
                         <span className="text-[10px] uppercase font-bold tracking-wider">
                           {startDate.toLocaleDateString(undefined, { month: 'short' })}
                         </span>
@@ -107,7 +122,7 @@ export default async function StudentSchedulePage() {
                           </Badge>
                           {isToday && (
                             <Badge className="bg-emerald-100 text-emerald-800 border-emerald-300 text-[10px]">
-                              Happening Today
+                              Today's Session
                             </Badge>
                           )}
                           {isPast && (
@@ -131,24 +146,6 @@ export default async function StudentSchedulePage() {
                         </div>
                       </div>
                     </div>
-
-                    {/* Right: Join Button */}
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        type="button"
-                        disabled={isPast}
-                        className={buttonVariants({
-                          size: 'sm',
-                          variant: isPast ? 'outline' : 'default',
-                          className: isPast
-                            ? 'text-xs text-slate-400 cursor-not-allowed'
-                            : 'bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium',
-                        })}
-                      >
-                        <Video className="w-3.5 h-3.5 mr-1.5" />
-                        {isPast ? 'Session Ended' : 'Join Live Class'}
-                      </button>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -162,7 +159,7 @@ export default async function StudentSchedulePage() {
             <div className="space-y-1">
               <h3 className="text-base font-semibold text-slate-800">No scheduled sessions</h3>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                There are no scheduled class sessions for your enrolled courses at this moment.
+                No upcoming class sessions found for your children at this time.
               </p>
             </div>
           </CardContent>
@@ -171,4 +168,3 @@ export default async function StudentSchedulePage() {
     </div>
   )
 }
-
