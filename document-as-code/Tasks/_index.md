@@ -31,7 +31,7 @@
 | 002 | `DONE` | `HIGH` | `Database` | Database Schema + Migrations (8 tabel utama + indexes) | 001 |
 | 003 | `DONE` | `HIGH` | `Database` | RLS Policies + Supabase TypeScript Type Generation | 002 |
 | 004 | `DONE` | `HIGH` | `Backend` | Auth System: Login, Invite Flow, Middleware Role-based Routing | 003 |
-| 005 | `TODO` | `HIGH` | `Frontend` | Layout per Role: Sidebar, Header, Navigation + Dashboard Skeleton | 004 |
+| 005 | `DONE` | `HIGH` | `Frontend` | Layout per Role: Sidebar, Header, Navigation + Dashboard Skeleton | 004 |
 | 006 | `TODO` | `HIGH` | `Frontend` | Modul Teacher: Kelola Kelas, Buat Homework, Grade Submission | 004, 005 |
 | 007 | `TODO` | `HIGH` | `Frontend` | Modul Student: Homework List, Submit, Lihat Nilai & Feedback | 004, 005 |
 | 008 | `TODO` | `MEDIUM` | `Frontend` | Modul Parent: Dashboard Progress Anak, Grafik Nilai | 004, 005 |
