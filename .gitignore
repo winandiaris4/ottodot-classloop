@@ -1,0 +1,46 @@
+# Documentation (Ditinggalkan sementara untuk development lokal)
+/docs
+
+# Kilo & IDEs / Editors
+.kilo
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Dependencies
+/node_modules
+/.pnpm-store
+
+# Next.js Build & Export Output
+/.next/
+/out/
+/build/
+/dist/
+
+# Environment Variables & Secrets (SANGAT PENTING)
+.env
+.env*.local
+.env.production
+.env.development
+
+# Vercel Deployment
+.vercel
+
+# Logs & Testing
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+/coverage/
+
+# OS Metadata
+.DS_Store
+Thumbs.db
