@@ -144,3 +144,4 @@ export function AppSidebar({ role, userName, userEmail }: AppSidebarProps) {
     </aside>
   )
 }
+

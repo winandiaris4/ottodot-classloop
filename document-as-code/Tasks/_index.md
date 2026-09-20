@@ -31,14 +31,14 @@
 | 002 | `DONE` | `HIGH` | `Database` | Database Schema + Migrations (8 tabel utama + indexes) | 001 |
 | 003 | `DONE` | `HIGH` | `Database` | RLS Policies + Supabase TypeScript Type Generation | 002 |
 | 004 | `DONE` | `HIGH` | `Backend` | Auth System: Login, Invite Flow, Middleware Role-based Routing | 003 |
-| 005 | `DONE` | `HIGH` | `Frontend` | Layout per Role: Sidebar, Header, Navigation + Dashboard Skeleton | 004 |
+| 005 | `IN_PROGRESS` | `HIGH` | `Frontend` | Layout per Role: Sidebar, Header, Navigation + Dashboard Skeleton | 004 |
 | 006 | `TODO` | `HIGH` | `Frontend` | Modul Teacher: Kelola Kelas, Buat Homework, Grade Submission | 004, 005 |
 | 007 | `TODO` | `HIGH` | `Frontend` | Modul Student: Homework List, Submit, Lihat Nilai & Feedback | 004, 005 |
 | 008 | `TODO` | `MEDIUM` | `Frontend` | Modul Parent: Dashboard Progress Anak, Grafik Nilai | 004, 005 |
 | 009 | `TODO` | `MEDIUM` | `Frontend` | Modul Admin: User Management, Link Parent-Student, Laporan | 004, 005 |
 | 010 | `TODO` | `MEDIUM` | `Backend` | Notifikasi: In-app Notification + Email via Resend | 006, 007 |
 | 011 | `TODO` | `MEDIUM` | `Backend` | Self-serve Enrollment: Landing Page + Stripe Checkout + Webhook | 002, 004, 009 |
-| 012 | `TODO` | `MEDIUM` | `DevOps` | Seed Data & Demo Accounts (4 role, kelas, homework, submission) | 002, 003 |
+| 012 | `DONE` | `HIGH` | `DevOps` | Seed Data & Demo Accounts (4 role, kelas, homework, submission) | 002, 003 |
 | 013 | `TODO` | `HIGH` | `QA` | Integration QA: End-to-end Flow Verification (semua role & core flows) | 006, 007, 008, 009, 010, 011 |
 | 014 | `TODO` | `LOW` | `DevOps` | Deploy ke Vercel + Environment Setup Production + README Lengkap | 013 |
 

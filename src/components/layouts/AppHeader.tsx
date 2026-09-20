@@ -74,3 +74,4 @@ export function AppHeader({ role, userName, userEmail, title }: AppHeaderProps) 
     </header>
   )
 }
+
