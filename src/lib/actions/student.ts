@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { submitHomeworkSchema } from '@/lib/validations/submission'
+import { dispatchNotification } from '@/lib/actions/notification'
 import { revalidatePath } from 'next/cache'
 
 export interface ActionResult {
@@ -49,13 +50,16 @@ export async function submitHomeworkAction(
   // 2. Fetch homework details (to find teacher_id and title)
   const { data: homework } = await supabase
     .from('homework')
-    .select('id, title, teacher_id')
+    .select('id, title, teacher_id, class:class_id(name)')
     .eq('id', validation.data.homework_id)
     .single()
 
   if (!homework) {
     return { success: false, error: 'Homework not found' }
   }
+
+  const classObj = Array.isArray(homework.class) ? homework.class[0] : homework.class
+  const className = classObj?.name || 'Class Session'
 
   // 3. Upsert submission
   const { data: submission, error: submitError } = await supabase
@@ -77,13 +81,13 @@ export async function submitHomeworkAction(
     return { success: false, error: submitError.message }
   }
 
-  // 4. Notify Teacher
-  await supabase.from('notifications').insert({
-    user_id: homework.teacher_id,
+  // 4. Dispatch notification to Teacher
+  await dispatchNotification({
+    userId: homework.teacher_id,
     title: `New Homework Submission`,
-    body: `${studentName} submitted "${homework.title}" for grading.`,
-    type: 'homework_new',
-    is_read: false,
+    body: `${studentName} submitted "${homework.title}" in ${className} for grading.`,
+    type: 'homework_submitted',
+    metadata: { homeworkId: homework.id, studentId: user.id },
   })
 
   revalidatePath('/student/homework')
@@ -93,4 +97,3 @@ export async function submitHomeworkAction(
 
   return { success: true, data: submission }
 }
-

@@ -7,6 +7,7 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { AppSidebar } from '@/components/layouts/AppSidebar'
+import { NotificationBell } from '@/components/layouts/NotificationBell'
 import { logoutAction } from '@/lib/actions/auth'
 
 interface AppHeaderProps {
@@ -41,15 +42,18 @@ export function AppHeader({ role, userName, userEmail, title }: AppHeaderProps) 
       </div>
 
       {/* Right Header Controls */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         <div className="hidden sm:flex items-center gap-2">
           <Badge variant="outline" className="text-xs capitalize font-medium text-slate-600 bg-slate-50">
             {role} Portal
           </Badge>
         </div>
 
+        {/* Real-time In-App Notification Bell */}
+        <NotificationBell />
+
         {/* User avatar chip & logout */}
-        <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
+        <div className="flex items-center gap-2.5 sm:gap-3 pl-2 border-l border-slate-200">
           <div className="w-8 h-8 rounded-full bg-indigo-100 border border-indigo-200 text-indigo-700 flex items-center justify-center font-bold text-xs">
             {userName ? userName.charAt(0).toUpperCase() : 'U'}
           </div>
