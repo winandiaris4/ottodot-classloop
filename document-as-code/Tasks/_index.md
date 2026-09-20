@@ -40,7 +40,7 @@
 | 011 | `DONE` | `MEDIUM` | `Backend` | Self-serve Enrollment: Landing Page + Stripe Checkout + Webhook | 002, 004, 009 |
 | 012 | `DONE` | `HIGH` | `DevOps` | Seed Data & Demo Accounts (4 role, kelas, homework, submission) | 002, 003 |
 | 013 | `DONE` | `HIGH` | `QA` | Integration QA: End-to-end Flow Verification (semua role & core flows) | 006, 007, 008, 009, 010, 011 |
-| 014 | `TODO` | `LOW` | `DevOps` | Deploy ke Vercel + Environment Setup Production + README Lengkap | 013 |
+| 014 | `DONE` | `LOW` | `DevOps` | Deploy ke Vercel + Environment Setup Production + README Lengkap | 013 |
 
 ---
 
