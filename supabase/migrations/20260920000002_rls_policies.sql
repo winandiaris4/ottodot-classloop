@@ -336,3 +336,4 @@ CREATE POLICY "users_update_own_notifications"
 CREATE POLICY "admin_manage_notifications"
   ON public.notifications FOR ALL
   USING (public.is_admin());
+
