@@ -13,8 +13,10 @@ services:
     ports:
       - "${APP_PORT:-3000}:3000"
     env_file:
-      - ${ENV_FILE:-.env.local}
+      - path: .env.production
+        required: false
+      - path: .env.local
+        required: false
     environment:
       - NODE_ENV=production
       - PORT=3000
-
