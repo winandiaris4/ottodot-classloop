@@ -15,7 +15,6 @@ export async function sendEmail({
   to,
   subject,
   html,
-  from = 'ClassLoop <notifications@classloop.ottodot.com>',
   from = process.env.RESEND_FROM_EMAIL || 'ClassLoop <notifications@ottodot.winamus.com>',
 }: SendEmailOptions): Promise<{ success: boolean; id?: string; error?: string }> {
   if (!resend) {
