@@ -11,6 +11,10 @@
 
 > **ClassLoop** is an enterprise-grade, gamified STEM & EdTech learning platform developed for **Ottodot** to power interactive science, physics, and coding classrooms for kids aged **6–15**. Built with multi-role isolation (**Student, Teacher, Parent, Admin**), Supabase Row-Level Security, Stripe checkout, interactive course discovery catalog, and Docker standalone containerization.
 
+<p align="center">
+  <img src="./public/images/screenshoot/landingpage.png" alt="ClassLoop Landing Page" width="100%" />
+</p>
+
 ---
 
 ## 🌟 1-Click Instant Demo Sandbox (Zero-Password)
@@ -58,6 +62,11 @@ graph TD
 ```
 
 ### 1. 🎓 Student Experience (`/student/`)
+
+<p align="center">
+  <img src="./public/images/screenshoot/student-dashboard.png" alt="ClassLoop Student Portal Dashboard" width="100%" />
+</p>
+
 * **Use Case:** A child logs in, checks upcoming live sessions, submits homework assignments, and views teacher remarks.
 * **Key Features:**
   - **Academic Dashboard:** Live overview of enrolled courses, completed tasks, average score %, and next live class.
@@ -66,6 +75,11 @@ graph TD
   - **Class Calendar (`/student/schedule`):** Interactive timeline of upcoming live STEM sessions.
 
 ### 2. 👨‍🏫 Teacher Experience (`/teacher/`)
+
+<p align="center">
+  <img src="./public/images/screenshoot/teacher-dashboard.png" alt="ClassLoop Teacher Hub Classroom Management" width="100%" />
+</p>
+
 * **Use Case:** An instructor organizes cohorts, publishes assignments, and grades submissions with personalized rubrics.
 * **Key Features:**
   - **Class Hub (`/teacher/classes`):** Cohort management, capacity tracking, and student roster inspection.
@@ -73,6 +87,11 @@ graph TD
   - **Split-View Grading Suite (`/teacher/homework/[id]/submissions`):** Side-by-side evaluation modal to review answers, assign numerical points, and write formative qualitative notes.
 
 ### 3. 👨‍👩‍👧 Parent Experience (`/parent/`)
+
+<p align="center">
+  <img src="./public/images/screenshoot/parent-dashboard.png" alt="ClassLoop Parent Visibility & Multi-Child Monitoring" width="100%" />
+</p>
+
 * **Use Case:** A parent monitors multiple children's educational progress, attendance, and teacher feedback in one place.
 * **Key Features:**
   - **Family Progress Dashboard (`/parent/dashboard`):** Real-time aggregate statistics for all linked children (completion rate %, average score, and recent teacher evaluations).
@@ -80,6 +99,11 @@ graph TD
   - **Family Schedule (`/parent/schedule`):** Consolidated timeline of all upcoming class sessions across siblings.
 
 ### 4. 🛡️ Admin Operations (`/admin/`)
+
+<p align="center">
+  <img src="./public/images/screenshoot/admin-dashboard.png" alt="ClassLoop Admin Executive Operations & Analytics" width="100%" />
+</p>
+
 * **Use Case:** School administrators manage accounts, link parents with students, oversee enrollments, and analyze platform performance.
 * **Key Features:**
   - **Executive Dashboard (`/admin/dashboard`):** Real-time KPI tiles, active student counts, completion rates, and 12-Month dynamic enrollment trajectory charts (`ResizeObserver`).
