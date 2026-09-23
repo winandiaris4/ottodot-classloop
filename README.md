@@ -281,29 +281,30 @@ Access the application at **[http://localhost:3001](http://localhost:3001)**.
 
 ---
 
-## 📜 Document-as-Code (DAC) Task Index
+## 📜 Engineering Milestone History
 
-All tasks and architectural decisions follow the Document-as-Code methodology versioned in [`document-as-code/Tasks/`](file:///home/aris/aris/Project/ottodot/document-as-code/Tasks/_index.md):
+ClassLoop was built through structured engineering milestones:
 
-* `task-001.md`: Project Setup & Tailwind v4
-* `task-002.md`: Database Schema & PostgreSQL Migrations
-* `task-003.md`: RLS Security Definers & TypeScript Types
-* `task-004.md`: Multi-Role Auth System & Protected Middleware
-* `task-005.md`: Responsive Sidebar, Header & Dashboard Skeletons
-* `task-006.md`: Teacher Classroom & Rubric Grading Module
-* `task-007.md`: Student Homework & Live Schedule Module
-* `task-008.md`: Parent Progress Visibility & Grade Reports
-* `task-009.md`: Admin Operations & Academic Analytics
-* `task-010.md`: In-App Notification Center & Resend Email Engine
-* `task-011.md`: Public Landing Page, Pricing & Stripe Checkout
-* `task-012.md`: Realistic English Seed Data & Demo Accounts
-* `task-013.md`: Integration QA & End-to-End Test Suite
-* `task-014.md`: Production Deployment Readiness & Portfolio README
-* `task-015.md`: Enterprise Header & Consolidated Profile Dropdown
-* `task-016.md`: Enterprise User Management UI & Data Density
-* `task-017.md`: Enterprise Dashboard Redesign & Dynamic KPI Trajectory Charts
-* `task-018.md`: Playful STEM EdTech Landing Page Redesign
-* `task-019.md`: Course Catalog Hub (`/courses`) & Interactive Detail Page (`/courses/[id]`)
+* **Task 01**: Project Scaffolding & Soft Indigo Design System
+* **Task 02**: Database Schema Architecture & PostgreSQL Migrations
+* **Task 03**: Supabase RLS Security Definer Policies & Strict TypeScript Typing
+* **Task 04**: 4-Role Authentication Guard & Route-Isolated Middleware
+* **Task 05**: Responsive Sidebar Navigation, Global Headers & Skeletons
+* **Task 06**: Teacher Classroom Cohorts & Split-View Rubric Grading Suite
+* **Task 07**: Student Homework Workspace & Countdown Live Schedule
+* **Task 08**: Parent Family Dashboard & Granular Child Report Cards
+* **Task 09**: Admin Executive Operations & Platform Turnaround Analytics
+* **Task 10**: Notification Center & Resend Transactional Email Engine
+* **Task 11**: Public Landing Page, Pricing Plans & Stripe Checkout
+* **Task 12**: English Seed Datasets & 1-Click Instant Demo Sandbox Hub
+* **Task 13**: End-to-End User Journeys & Route Guard Verification
+* **Task 14**: Standalone Docker Containerization & Deployment Setup
+* **Task 15**: Unified Enterprise Topbar Navigation & Profile Dropdown
+* **Task 16**: Enterprise User Management Directory with Masked UUIDs
+* **Task 17**: Dynamic 12-Month Enrollment Trajectory Analytics (`ResizeObserver`)
+* **Task 18**: Playful STEM Hero Redesign with 3D Assets & Wave Transitions
+* **Task 19**: Full-Width Course Discovery Hub (`/courses`) & Detail Pages (`/courses/[id]`)
+* **Task 20**: Interactive About & Platform Architecture Hub (`/about`)
 
 ---
 

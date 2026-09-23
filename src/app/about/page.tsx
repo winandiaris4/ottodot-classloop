@@ -555,7 +555,7 @@ export default function AboutPage() {
                 Future Expert Features Roadmap
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                Planned capability upgrades documented in `document-as-code/brainstorming/feature-backlog-roadmap.md`.
+                Planned capability upgrades across upcoming phases for core utility, communication, and realtime gamification.
               </p>
             </div>
 
