@@ -41,6 +41,9 @@
 | 012 | `DONE` | `HIGH` | `DevOps` | Seed Data & Demo Accounts (4 role, kelas, homework, submission) | 002, 003 |
 | 013 | `DONE` | `HIGH` | `QA` | Integration QA: End-to-end Flow Verification (semua role & core flows) | 006, 007, 008, 009, 010, 011 |
 | 014 | `DONE` | `LOW` | `DevOps` | Deploy ke Vercel + Environment Setup Production + README Lengkap | 013 |
+| 015 | `DONE` | `HIGH` | `Frontend` | Enterprise Header & Navigation Polish: Consolidated Profile Dropdown & Clean Sidebar | 005, 009 |
+| 016 | `DONE` | `HIGH` | `Frontend` | Enterprise User Management UI: Data Density, Masked UUIDs, Action Hierarchy & Table Pagination | 009, 015 |
+| 017 | `DONE` | `HIGH` | `Frontend` | Enterprise Dashboard Redesign: Clean Page Header, Consolidated Metrics & KPI Visuals | 009, 015 |
 
 ---
 
@@ -57,5 +60,5 @@
 
 ---
 
-*Last updated: 2026-09-20*
+*Last updated: 2026-09-22*
 

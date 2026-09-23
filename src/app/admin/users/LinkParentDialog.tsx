@@ -37,8 +37,14 @@ export function LinkParentDialog({ parents, students }: LinkParentDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className={buttonVariants({ className: 'bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm' })}>
-        <Link2 className="w-4 h-4 mr-1.5" /> Link Parent & Student
+      <DialogTrigger
+        className={buttonVariants({
+          variant: 'outline',
+          size: 'sm',
+          className: 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs shadow-2xs cursor-pointer',
+        })}
+      >
+        <Link2 className="w-3.5 h-3.5 mr-1.5 text-slate-500" /> Link Parent & Student
       </DialogTrigger>
       <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>

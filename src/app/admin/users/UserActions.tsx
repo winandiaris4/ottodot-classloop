@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useTransition } from 'react'
-import { updateUserRoleAction, unlinkParentStudentAction } from '@/lib/actions/admin'
+import { updateUserAction, deleteUserAction, unlinkParentStudentAction } from '@/lib/actions/admin'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,8 +19,21 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { MoreHorizontal, Shield, UserCog, Unlink, Loader2, AlertCircle } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import {
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Shield,
+  Unlink,
+  Loader2,
+  AlertCircle,
+  AlertTriangle,
+  GraduationCap,
+  School,
+  HeartHandshake,
+} from 'lucide-react'
+import type { UserRole } from '@/types'
 
 interface LinkedChild {
   linkId: string
@@ -31,29 +44,62 @@ interface LinkedChild {
 interface UserActionsProps {
   userId: string
   userName: string
-  currentRole: 'admin' | 'teacher' | 'student' | 'parent'
+  currentRole: UserRole
   linkedChildren?: LinkedChild[]
 }
 
+const ROLE_OPTIONS: { role: UserRole; label: string; icon: React.ElementType }[] = [
+  { role: 'student', label: 'Student', icon: GraduationCap },
+  { role: 'teacher', label: 'Teacher', icon: School },
+  { role: 'parent', label: 'Parent', icon: HeartHandshake },
+  { role: 'admin', label: 'Admin', icon: Shield },
+]
+
 export function UserActions({ userId, userName, currentRole, linkedChildren = [] }: UserActionsProps) {
-  const [roleDialogOpen, setRoleDialogOpen] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [linksDialogOpen, setLinksDialogOpen] = useState(false)
-  const [selectedRole, setSelectedRole] = useState(currentRole)
+
+  const [fullName, setFullName] = useState(userName)
+  const [selectedRole, setSelectedRole] = useState<UserRole>(currentRole)
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
-  const handleRoleChange = () => {
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
     setError(null)
+
+    if (!fullName.trim()) {
+      setError('Full name cannot be empty.')
+      return
+    }
+
     const formData = new FormData()
     formData.append('userId', userId)
+    formData.append('full_name', fullName.trim())
     formData.append('role', selectedRole)
 
     startTransition(async () => {
-      const res = await updateUserRoleAction(null, formData)
+      const res = await updateUserAction(null, formData)
       if (!res.success) {
-        setError(res.error || 'Failed to update role')
+        setError(res.error || 'Failed to update user profile')
       } else {
-        setRoleDialogOpen(false)
+        setEditDialogOpen(false)
+      }
+    })
+  }
+
+  const handleDeleteSubmit = () => {
+    setError(null)
+    const formData = new FormData()
+    formData.append('userId', userId)
+
+    startTransition(async () => {
+      const res = await deleteUserAction(null, formData)
+      if (!res.success) {
+        setError(res.error || 'Failed to delete user')
+      } else {
+        setDeleteDialogOpen(false)
       }
     })
   }
@@ -74,96 +120,197 @@ export function UserActions({ userId, userName, currentRole, linkedChildren = []
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100">
+        <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors">
           <MoreHorizontal className="h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuLabel className="text-xs text-slate-500">Actions</DropdownMenuLabel>
           <DropdownMenuItem
             className="text-xs cursor-pointer"
-            onClick={() => setRoleDialogOpen(true)}
+            onClick={() => {
+              setFullName(userName)
+              setSelectedRole(currentRole)
+              setError(null)
+              setEditDialogOpen(true)
+            }}
           >
-            <UserCog className="w-3.5 h-3.5 mr-2 text-indigo-600" />
-            Change User Role
+            <Pencil className="w-3.5 h-3.5 mr-2 text-indigo-600" />
+            Edit User Profile
           </DropdownMenuItem>
+
           {currentRole === 'parent' && linkedChildren.length > 0 && (
             <DropdownMenuItem
               className="text-xs cursor-pointer text-slate-700"
-              onClick={() => setLinksDialogOpen(true)}
+              onClick={() => {
+                setError(null)
+                setLinksDialogOpen(true)
+              }}
             >
-              <Unlink className="w-3.5 h-3.5 mr-2 text-rose-600" />
+              <Unlink className="w-3.5 h-3.5 mr-2 text-amber-600" />
               Manage Linked Children ({linkedChildren.length})
             </DropdownMenuItem>
           )}
+
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="text-xs cursor-pointer text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+            onClick={() => {
+              setError(null)
+              setDeleteDialogOpen(true)
+            }}
+          >
+            <Trash2 className="w-3.5 h-3.5 mr-2 text-rose-600" />
+            Delete User
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Role Change Modal */}
-      <Dialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen}>
+      {/* Edit User Modal */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="sm:max-w-[440px]">
+          <form onSubmit={handleEditSubmit}>
+            <DialogHeader>
+              <DialogTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Pencil className="w-4 h-4 text-indigo-600" />
+                Edit User: {userName}
+              </DialogTitle>
+              <DialogDescription className="text-xs text-slate-500">
+                Update account details and administrative role permissions.
+              </DialogDescription>
+            </DialogHeader>
+
+            {error && (
+              <div className="mt-3 p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div className="space-y-3.5 py-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
+                <Input
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  disabled={isPending}
+                  className="text-xs h-9"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">User Role</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {ROLE_OPTIONS.map((opt) => {
+                    const Icon = opt.icon
+                    const isSelected = selectedRole === opt.role
+                    return (
+                      <button
+                        key={opt.role}
+                        type="button"
+                        onClick={() => setSelectedRole(opt.role)}
+                        disabled={isPending}
+                        className={`p-2.5 rounded-lg border text-left transition-all ${
+                          isSelected
+                            ? 'border-indigo-600 bg-indigo-50/70 text-indigo-950 ring-1 ring-indigo-600 shadow-xs'
+                            : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-indigo-600' : 'text-slate-500'}`} />
+                            <span className="text-xs font-semibold">{opt.label}</span>
+                          </div>
+                          {isSelected && <div className="w-2 h-2 rounded-full bg-indigo-600" />}
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setEditDialogOpen(false)}
+                disabled={isPending}
+                className="text-xs"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={isPending || (fullName === userName && selectedRole === currentRole)}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs"
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Saving Changes...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Confirmation Modal */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent className="sm:max-w-[420px]">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Shield className="w-4 h-4 text-indigo-600" />
-              Update Role for {userName}
+              <AlertTriangle className="w-5 h-5 text-rose-600" />
+              Delete User Account
             </DialogTitle>
             <DialogDescription className="text-xs text-slate-500">
-              Modifying user roles changes their platform permissions, sidebar access, and dashboard experience.
+              Are you sure you want to delete <span className="font-semibold text-slate-900">{userName}</span>?
             </DialogDescription>
           </DialogHeader>
 
           {error && (
-            <div className="p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center gap-2">
+            <div className="mt-2 p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          <div className="space-y-2 py-2">
-            <label className="text-xs font-semibold text-slate-700">Select Role</label>
-            <div className="grid grid-cols-2 gap-2">
-              {(['student', 'teacher', 'parent', 'admin'] as const).map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setSelectedRole(r)}
-                  className={`p-3 rounded-lg border text-left text-xs font-semibold capitalize transition-all ${
-                    selectedRole === r
-                      ? 'border-indigo-600 bg-indigo-50/70 text-indigo-900 shadow-xs'
-                      : 'border-slate-200 hover:border-slate-300 text-slate-700'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span>{r}</span>
-                    {selectedRole === r && <div className="w-2 h-2 rounded-full bg-indigo-600" />}
-                  </div>
-                </button>
-              ))}
-            </div>
+          <div className="p-3 bg-rose-50/70 border border-rose-200/80 rounded-lg text-xs text-rose-800 space-y-1 my-2">
+            <p className="font-semibold">⚠️ Irreversible Action</p>
+            <p className="text-[11px] leading-relaxed">
+              This will permanently delete the user credentials, profile records, and cascade across related enrollments and homework submissions.
+            </p>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setRoleDialogOpen(false)}
+              onClick={() => setDeleteDialogOpen(false)}
               disabled={isPending}
+              className="text-xs"
             >
               Cancel
             </Button>
             <Button
               type="button"
               size="sm"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
-              onClick={handleRoleChange}
-              disabled={isPending || selectedRole === currentRole}
+              onClick={handleDeleteSubmit}
+              disabled={isPending}
+              className="bg-rose-600 hover:bg-rose-700 text-white text-xs"
             >
               {isPending ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Saving...
+                  <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Deleting...
                 </>
               ) : (
-                'Save Changes'
+                'Yes, Delete User'
               )}
             </Button>
           </DialogFooter>
@@ -194,7 +341,7 @@ export function UserActions({ userId, userName, currentRole, linkedChildren = []
               <div key={child.linkId} className="py-2.5 flex items-center justify-between">
                 <div>
                   <div className="text-sm font-semibold text-slate-900">{child.studentName}</div>
-                  <div className="text-[11px] text-slate-400">ID: {child.studentId.slice(0, 8)}...</div>
+                  <div className="text-[11px] text-slate-400 font-mono">ID: {child.studentId.slice(0, 8)}...</div>
                 </div>
                 <Button
                   variant="outline"

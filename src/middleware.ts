@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import type { Database } from '@/types/database.types'
 import type { UserRole } from '@/types'
+import { getFastUserFromRequest } from '@/lib/auth/fast-auth'
 
 const ROLE_HOME: Record<UserRole, string> = {
   student: '/student/dashboard',
@@ -20,30 +21,36 @@ const PROTECTED_PREFIXES: Record<UserRole, string> = {
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
-  const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
-          supabaseResponse = NextResponse.next({ request })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
+  // 1. Fast path: Verify JWT locally (0.5ms, zero network hops)
+  let user: any = await getFastUserFromRequest(request)
+  let supabase: any = null
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // 2. Slow path fallback: Only if local verification fails or no token
+  if (!user) {
+    supabase = createServerClient<Database>(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll()
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) =>
+              request.cookies.set(name, value)
+            )
+            supabaseResponse = NextResponse.next({ request })
+            cookiesToSet.forEach(({ name, value, options }) =>
+              supabaseResponse.cookies.set(name, value, options)
+            )
+          },
+        },
+      }
+    )
+
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  }
 
   const pathname = request.nextUrl.pathname
 
@@ -59,20 +66,21 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Role-based access control
+  // Role-based access control & Header forwarding
+  let role: UserRole | undefined = user?.user_metadata?.role as UserRole | undefined
   if (user && isProtected) {
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const role = profile?.role as UserRole | undefined
+    if (!role && supabase) {
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+      role = profile?.role as UserRole | undefined
+    }
 
     if (role) {
       const allowedPrefix = PROTECTED_PREFIXES[role]
       if (!pathname.startsWith(allowedPrefix)) {
-        // Redirect ke dashboard yang sesuai role
         const redirectUrl = request.nextUrl.clone()
         redirectUrl.pathname = ROLE_HOME[role]
         return NextResponse.redirect(redirectUrl)
@@ -80,23 +88,27 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Redirect authenticated users dari /login ke dashboard sesuai role
-  if (user && pathname === '/login') {
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const role = profile?.role as UserRole | undefined
-    if (role) {
-      const redirectUrl = request.nextUrl.clone()
-      redirectUrl.pathname = ROLE_HOME[role]
-      return NextResponse.redirect(redirectUrl)
-    }
+  // Pass authenticated user context via request headers to avoid duplicate auth calls in layouts
+  const requestHeaders = new Headers(request.headers)
+  if (user) {
+    requestHeaders.set('x-user-id', user.id)
+    requestHeaders.set('x-user-role', role || 'student')
+    requestHeaders.set('x-user-name', encodeURIComponent(user.user_metadata?.full_name || ''))
+    requestHeaders.set('x-user-email', user.email || '')
   }
 
-  return supabaseResponse
+  const finalResponse = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  })
+
+  // Copy cookies if supabaseResponse was modified
+  supabaseResponse.cookies.getAll().forEach((cookie) => {
+    finalResponse.cookies.set(cookie.name, cookie.value, cookie)
+  })
+
+  return finalResponse
 }
 
 export const config = {

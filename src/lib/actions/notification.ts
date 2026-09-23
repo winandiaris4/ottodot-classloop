@@ -21,27 +21,35 @@ export interface NotificationItem {
   created_at: string
 }
 
+import { headers } from 'next/headers'
+import { getCurrentUser } from '@/lib/actions/auth'
+import { createServiceClient } from '@/lib/supabase/server'
+
 export async function fetchNotificationsAction(): Promise<{
   success: boolean
   notifications: NotificationItem[]
   unreadCount: number
   error?: string
 }> {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const headerList = await headers()
+  let userId = headerList.get('x-user-id')
 
-  if (!user) {
+  if (!userId) {
+    const user = await getCurrentUser()
+    userId = user?.id || null
+  }
+
+  if (!userId) {
     return { success: false, notifications: [], unreadCount: 0, error: 'Unauthorized' }
   }
 
+  const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('notifications')
-    .select('*')
-    .eq('user_id', user.id)
+    .select('id, user_id, title, body, type, is_read, metadata, created_at')
+    .eq('user_id', userId)
     .order('created_at', { ascending: false })
-    .limit(25)
+    .limit(20)
 
   if (error) {
     return { success: false, notifications: [], unreadCount: 0, error: error.message }
@@ -62,20 +70,24 @@ export async function markNotificationAsReadAction(
     return { success: false, error: 'Missing notification ID' }
   }
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const headerList = await headers()
+  let userId = headerList.get('x-user-id')
 
-  if (!user) {
+  if (!userId) {
+    const user = await getCurrentUser()
+    userId = user?.id || null
+  }
+
+  if (!userId) {
     return { success: false, error: 'Unauthorized' }
   }
 
+  const supabase = createServiceClient()
   const { error } = await supabase
     .from('notifications')
     .update({ is_read: true })
     .eq('id', notificationId)
-    .eq('user_id', user.id)
+    .eq('user_id', userId)
 
   if (error) {
     return { success: false, error: error.message }
@@ -86,19 +98,23 @@ export async function markNotificationAsReadAction(
 }
 
 export async function markAllNotificationsAsReadAction(): Promise<ActionResult> {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const headerList = await headers()
+  let userId = headerList.get('x-user-id')
 
-  if (!user) {
+  if (!userId) {
+    const user = await getCurrentUser()
+    userId = user?.id || null
+  }
+
+  if (!userId) {
     return { success: false, error: 'Unauthorized' }
   }
 
+  const supabase = createServiceClient()
   const { error } = await supabase
     .from('notifications')
     .update({ is_read: true })
-    .eq('user_id', user.id)
+    .eq('user_id', userId)
     .eq('is_read', false)
 
   if (error) {

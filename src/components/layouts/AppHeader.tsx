@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react'
 import type { UserRole } from '@/types'
-import { Menu, LogOut } from 'lucide-react'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Menu } from 'lucide-react'
+import { buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { AppSidebar } from '@/components/layouts/AppSidebar'
 import { NotificationBell } from '@/components/layouts/NotificationBell'
-import { logoutAction } from '@/lib/actions/auth'
+import { UserDropdownMenu } from '@/components/layouts/UserDropdownMenu'
 
 interface AppHeaderProps {
   role: UserRole
@@ -21,7 +21,7 @@ export function AppHeader({ role, userName, userEmail, title }: AppHeaderProps) 
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
-    <header className="h-16 border-b border-slate-200 bg-white px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
+    <header className="h-16 border-b border-slate-200/80 bg-white/85 backdrop-blur-md px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
       {/* Mobile Drawer Trigger & Title */}
       <div className="flex items-center gap-3">
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -29,53 +29,41 @@ export function AppHeader({ role, userName, userEmail, title }: AppHeaderProps) 
             <Menu className="w-5 h-5" />
             <span className="sr-only">Toggle Navigation</span>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-64 bg-slate-900 border-r border-slate-800">
+          <SheetContent side="left" className="p-0 w-64 bg-slate-50 border-r border-slate-200">
             <AppSidebar role={role} userName={userName} userEmail={userEmail} />
           </SheetContent>
         </Sheet>
 
-        <div>
-          <h1 className="text-base sm:text-lg font-bold text-slate-800 tracking-tight">
-            {title || 'Dashboard'}
-          </h1>
+        <div className="flex items-center gap-1.5 text-xs text-slate-500">
+          <span className="font-medium text-slate-400">ClassLoop</span>
+          <span className="text-slate-300">/</span>
+          <span className="capitalize font-medium text-slate-500">{role}</span>
+          <span className="text-slate-300">/</span>
+          <span className="font-bold text-slate-900">{title || 'System Overview'}</span>
         </div>
       </div>
 
       {/* Right Header Controls */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div className="hidden sm:flex items-center gap-2">
-          <Badge variant="outline" className="text-xs capitalize font-medium text-slate-600 bg-slate-50">
-            {role} Portal
-          </Badge>
-        </div>
+      <div className="flex items-center gap-2.5 sm:gap-4">
+        {/* Role Portal Indicator */}
+        <Badge
+          variant="outline"
+          className="hidden sm:inline-flex text-[11px] font-semibold text-slate-600 bg-slate-50 border-slate-200 px-2.5 py-0.5"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block" />
+          {role.charAt(0).toUpperCase() + role.slice(1)} Console
+        </Badge>
 
         {/* Real-time In-App Notification Bell */}
         <NotificationBell />
 
-        {/* User avatar chip & logout */}
-        <div className="flex items-center gap-2.5 sm:gap-3 pl-2 border-l border-slate-200">
-          <div className="w-8 h-8 rounded-full bg-indigo-100 border border-indigo-200 text-indigo-700 flex items-center justify-center font-bold text-xs">
-            {userName ? userName.charAt(0).toUpperCase() : 'U'}
-          </div>
-          <div className="hidden md:block text-left">
-            <p className="text-xs font-semibold text-slate-800 leading-none">{userName || 'Pengguna'}</p>
-            <p className="text-[10px] text-slate-500 mt-0.5">{userEmail || ''}</p>
-          </div>
-
-          <form action={logoutAction}>
-            <Button
-              type="submit"
-              variant="ghost"
-              size="sm"
-              className="text-xs text-slate-500 hover:text-red-600 hover:bg-red-50"
-            >
-              <LogOut className="w-3.5 h-3.5 mr-1 text-slate-400 group-hover:text-red-600" />
-              <span className="hidden sm:inline">Logout</span>
-            </Button>
-          </form>
+        {/* Consolidated Enterprise User Dropdown Menu */}
+        <div className="pl-1 sm:pl-2 border-l border-slate-200/80">
+          <UserDropdownMenu role={role} userName={userName} userEmail={userEmail} />
         </div>
       </div>
     </header>
   )
 }
+
 

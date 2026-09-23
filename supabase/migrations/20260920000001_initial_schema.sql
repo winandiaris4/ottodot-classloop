@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS public.enrollments (
   student_id          UUID NOT NULL REFERENCES public.user_profiles(id) ON DELETE CASCADE,
   class_id            UUID NOT NULL REFERENCES public.classes(id) ON DELETE CASCADE,
   plan_id             UUID REFERENCES public.plans(id) ON DELETE SET NULL,
-  status              TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'cancelled', 'expired')),
+  status              TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'completed', 'cancelled', 'expired')),
   stripe_session_id   TEXT,
   stripe_payment_id   TEXT,
   enrolled_at         TIMESTAMPTZ NOT NULL DEFAULT NOW(),

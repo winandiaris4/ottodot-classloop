@@ -1,14 +1,17 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import {
   linkParentStudentSchema,
   unlinkParentStudentSchema,
   updateUserRoleSchema,
   enrollStudentSchema,
   updateEnrollmentStatusSchema,
+  createUserSchema,
+  updateUserSchema,
+  deleteUserSchema,
 } from '@/lib/validations/admin'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
 export interface ActionResult {
   success: boolean
@@ -189,13 +192,15 @@ export async function enrollStudentAction(
     }
   }
 
-  const { supabase, error: authError } = await verifyAdmin()
-  if (authError || !supabase) {
+  const { user, error: authError } = await verifyAdmin()
+  if (authError || !user) {
     return { success: false, error: authError || 'Unauthorized' }
   }
 
+  const serviceClient = createServiceClient()
+
   // Check if student is already enrolled in this class
-  const { data: existingEnrollment } = await supabase
+  const { data: existingEnrollment } = await serviceClient
     .from('enrollments')
     .select('id')
     .eq('student_id', validation.data.studentId)
@@ -206,7 +211,7 @@ export async function enrollStudentAction(
     return { success: false, error: 'Student is already enrolled in this class.' }
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await serviceClient
     .from('enrollments')
     .insert({
       student_id: validation.data.studentId,
@@ -224,6 +229,8 @@ export async function enrollStudentAction(
   revalidatePath('/admin/dashboard')
   revalidatePath('/student/dashboard')
   revalidatePath('/parent/dashboard')
+  revalidateTag('admin-dashboard', 'max')
+  revalidateTag('admin-enrollments', 'max')
 
   return { success: true, data }
 }
@@ -245,12 +252,13 @@ export async function updateEnrollmentStatusAction(
     }
   }
 
-  const { supabase, error: authError } = await verifyAdmin()
-  if (authError || !supabase) {
+  const { user, error: authError } = await verifyAdmin()
+  if (authError || !user) {
     return { success: false, error: authError || 'Unauthorized' }
   }
 
-  const { data, error } = await supabase
+  const serviceClient = createServiceClient()
+  const { data, error } = await serviceClient
     .from('enrollments')
     .update({ status: validation.data.status })
     .eq('id', validation.data.enrollmentId)
@@ -263,7 +271,179 @@ export async function updateEnrollmentStatusAction(
 
   revalidatePath('/admin/enrollments')
   revalidatePath('/admin/dashboard')
+  revalidatePath('/student/dashboard')
+  revalidatePath('/parent/dashboard')
+  revalidateTag('admin-dashboard', 'max')
+  revalidateTag('admin-enrollments', 'max')
 
   return { success: true, data }
+}
+
+export async function createUserAction(
+  prevState: ActionResult | null,
+  formData: FormData
+): Promise<ActionResult> {
+  const raw = {
+    full_name: formData.get('full_name'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+    role: formData.get('role'),
+  }
+
+  const validation = createUserSchema.safeParse(raw)
+  if (!validation.success) {
+    return {
+      success: false,
+      error: validation.error.issues[0]?.message || 'Invalid user data',
+    }
+  }
+
+  const { error: authError } = await verifyAdmin()
+  if (authError) {
+    return { success: false, error: authError }
+  }
+
+  const serviceClient = createServiceClient()
+  const { data: newUser, error: createError } = await serviceClient.auth.admin.createUser({
+    email: validation.data.email,
+    password: validation.data.password,
+    email_confirm: true,
+    user_metadata: {
+      full_name: validation.data.full_name,
+      role: validation.data.role,
+    },
+  })
+
+  if (createError || !newUser.user) {
+    return {
+      success: false,
+      error: createError?.message || 'Failed to create user account',
+    }
+  }
+
+  // Ensure user_profiles row exists
+  const { error: profileError } = await serviceClient
+    .from('user_profiles')
+    .upsert({
+      id: newUser.user.id,
+      full_name: validation.data.full_name,
+      role: validation.data.role,
+    })
+
+  if (profileError) {
+    console.error('Profile upsert warning:', profileError)
+  }
+
+  revalidatePath('/admin/users')
+  revalidatePath('/admin/dashboard')
+  revalidateTag('admin-users', 'max')
+  revalidateTag('user-profiles', 'max')
+  revalidateTag('admin-dashboard-summary', 'max')
+
+  return { success: true, data: newUser.user }
+}
+
+export async function updateUserAction(
+  prevState: ActionResult | null,
+  formData: FormData
+): Promise<ActionResult> {
+  const raw = {
+    userId: formData.get('userId'),
+    full_name: formData.get('full_name'),
+    role: formData.get('role'),
+  }
+
+  const validation = updateUserSchema.safeParse(raw)
+  if (!validation.success) {
+    return {
+      success: false,
+      error: validation.error.issues[0]?.message || 'Invalid user update data',
+    }
+  }
+
+  const { error: authError } = await verifyAdmin()
+  if (authError) {
+    return { success: false, error: authError }
+  }
+
+  const serviceClient = createServiceClient()
+
+  // Update user_profiles
+  const { data: updatedProfile, error: profileError } = await serviceClient
+    .from('user_profiles')
+    .update({
+      full_name: validation.data.full_name,
+      role: validation.data.role,
+    })
+    .eq('id', validation.data.userId)
+    .select()
+    .single()
+
+  if (profileError) {
+    return { success: false, error: profileError.message }
+  }
+
+  // Sync user metadata in auth.users
+  await serviceClient.auth.admin.updateUserById(validation.data.userId, {
+    user_metadata: {
+      full_name: validation.data.full_name,
+      role: validation.data.role,
+    },
+  })
+
+  revalidatePath('/admin/users')
+  revalidatePath('/admin/dashboard')
+  revalidateTag('admin-users', 'max')
+  revalidateTag('user-profiles', 'max')
+  revalidateTag('admin-dashboard-summary', 'max')
+
+  return { success: true, data: updatedProfile }
+}
+
+export async function deleteUserAction(
+  prevState: ActionResult | null,
+  formData: FormData
+): Promise<ActionResult> {
+  const raw = {
+    userId: formData.get('userId'),
+  }
+
+  const validation = deleteUserSchema.safeParse(raw)
+  if (!validation.success) {
+    return {
+      success: false,
+      error: validation.error.issues[0]?.message || 'Invalid user ID',
+    }
+  }
+
+  const { user: currentAdmin, error: authError } = await verifyAdmin()
+  if (authError || !currentAdmin) {
+    return { success: false, error: authError || 'Unauthorized' }
+  }
+
+  // Prevent self-deletion
+  if (currentAdmin.id === validation.data.userId) {
+    return {
+      success: false,
+      error: 'You cannot delete your own administrative account.',
+    }
+  }
+
+  const serviceClient = createServiceClient()
+  const { error: deleteError } = await serviceClient.auth.admin.deleteUser(
+    validation.data.userId
+  )
+
+  if (deleteError) {
+    return { success: false, error: deleteError.message }
+  }
+
+  revalidatePath('/admin/users')
+  revalidatePath('/admin/dashboard')
+  revalidateTag('admin-users', 'max')
+  revalidateTag('user-profiles', 'max')
+  revalidateTag('admin-dashboard-summary', 'max')
+
+  return { success: true }
 }
 

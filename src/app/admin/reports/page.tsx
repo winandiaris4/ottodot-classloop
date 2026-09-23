@@ -1,5 +1,4 @@
 import React from 'react'
-import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -15,36 +14,10 @@ import {
   Percent,
 } from 'lucide-react'
 
-export default async function AdminReportsPage() {
-  const supabase = await createClient()
+import { getCachedAdminReportsData } from '@/lib/cache/admin-cache'
 
-  // Execute all reporting queries in parallel (1 network roundtrip)
-  const [
-    { data: classes = [] },
-    { data: enrollments = [] },
-    { data: homework = [] },
-    { data: submissions = [] },
-  ] = await Promise.all([
-    supabase
-      .from('classes')
-      .select('id, name, description, max_students, status, created_at, teacher:teacher_id(full_name)')
-      .order('name', { ascending: true }),
-    supabase.from('enrollments').select('id, class_id, student_id, status'),
-    supabase.from('homework').select('id, class_id, title, max_score'),
-    supabase
-      .from('homework_submissions')
-      .select(`
-        id,
-        score,
-        feedback,
-        submitted_at,
-        graded_at,
-        homework_id,
-        student:student_id(full_name),
-        homework:homework_id(title, class_id, max_score)
-      `)
-      .order('graded_at', { ascending: false }),
-  ])
+export default async function AdminReportsPage() {
+  const { classes, enrollments, homework, submissions } = await getCachedAdminReportsData()
 
   const safeClasses = classes || []
   const safeEnrollments = enrollments || []

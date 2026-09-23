@@ -1,6 +1,7 @@
 import React from 'react'
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { headers } from 'next/headers'
+import { getCurrentUser } from '@/lib/actions/auth'
 import { DashboardShell } from '@/components/layouts/DashboardShell'
 
 export default async function AdminLayout({
@@ -8,30 +9,34 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const headerList = await headers()
+  let userId = headerList.get('x-user-id')
+  let role = headerList.get('x-user-role')
+  let userName = headerList.get('x-user-name')
+    ? decodeURIComponent(headerList.get('x-user-name')!)
+    : ''
+  let userEmail = headerList.get('x-user-email') || ''
 
-  if (!user) {
-    redirect('/login')
+  if (!userId) {
+    const user = await getCurrentUser()
+    if (!user) {
+      redirect('/login')
+    }
+    userId = user.id
+    role = user.user_metadata?.role || 'admin'
+    userName = user.user_metadata?.full_name || 'Administrator'
+    userEmail = user.email || ''
   }
 
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
-
-  if (profile?.role !== 'admin') {
-    redirect(`/${profile?.role || 'student'}/dashboard`)
+  if (role !== 'admin') {
+    redirect(`/${role || 'student'}/dashboard`)
   }
 
   return (
     <DashboardShell
       role="admin"
-      userName={profile?.full_name || 'Administrator'}
-      userEmail={user.email}
+      userName={userName || 'Administrator'}
+      userEmail={userEmail}
       title="Admin Management Console"
     >
       {children}

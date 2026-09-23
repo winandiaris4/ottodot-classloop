@@ -102,17 +102,17 @@ export function EnrollmentsTable({ enrollments, students, classes }: Enrollments
               <button
                 key={tab.id}
                 onClick={() => setSelectedStatus(tab.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer border ${
                   isActive
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'text-slate-600 hover:bg-slate-100'
+                    ? 'bg-indigo-50 text-indigo-700 border-indigo-200/90 shadow-2xs font-semibold'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-transparent'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
                 <span>{tab.label}</span>
                 <span
                   className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                    isActive ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-500'
+                    isActive ? 'bg-indigo-100/90 text-indigo-700' : 'bg-slate-100 text-slate-500'
                   }`}
                 >
                   {tab.count}

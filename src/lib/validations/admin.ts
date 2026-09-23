@@ -37,3 +37,30 @@ export const updateEnrollmentStatusSchema = z.object({
 
 export type UpdateEnrollmentStatusInput = z.infer<typeof updateEnrollmentStatusSchema>
 
+export const createUserSchema = z.object({
+  full_name: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  role: z.enum(["admin", "teacher", "student", "parent"], {
+    message: "Invalid role selected",
+  }),
+})
+
+export type CreateUserInput = z.infer<typeof createUserSchema>
+
+export const updateUserSchema = z.object({
+  userId: z.string().uuid("Invalid user ID"),
+  full_name: z.string().min(2, "Full name must be at least 2 characters"),
+  role: z.enum(["admin", "teacher", "student", "parent"], {
+    message: "Invalid role selected",
+  }),
+})
+
+export type UpdateUserInput = z.infer<typeof updateUserSchema>
+
+export const deleteUserSchema = z.object({
+  userId: z.string().uuid("Invalid user ID"),
+})
+
+export type DeleteUserInput = z.infer<typeof deleteUserSchema>
+
