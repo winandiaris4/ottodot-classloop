@@ -136,6 +136,7 @@ export default function AboutPage() {
                   <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                   <span className="ml-3 text-indigo-300 text-[11px] font-sans font-medium">classloop.ottodot.com • Playful STEM Learning Hub</span>
+                  <span className="ml-3 text-indigo-300 text-[11px] font-sans font-medium">ottodot.winamus.com • Playful STEM Learning Hub</span>
                 </div>
                 <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-400 uppercase tracking-wider bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-800/60">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -245,6 +246,7 @@ export default function AboutPage() {
                       <span className="w-2 h-2 rounded-full bg-amber-400" />
                       <span className="w-2 h-2 rounded-full bg-emerald-400" />
                       <span className="ml-2 text-slate-600 font-medium">classloop.ottodot.com/student</span>
+                      <span className="ml-2 text-slate-600 font-medium">ottodot.winamus.com/student</span>
                     </div>
                     <span className="text-[9px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">Learner View</span>
                   </div>
@@ -316,6 +318,7 @@ export default function AboutPage() {
                       <span className="w-2 h-2 rounded-full bg-amber-400" />
                       <span className="w-2 h-2 rounded-full bg-emerald-400" />
                       <span className="ml-2 text-slate-600 font-medium">classloop.ottodot.com/teacher</span>
+                      <span className="ml-2 text-slate-600 font-medium">ottodot.winamus.com/teacher</span>
                     </div>
                     <span className="text-[9px] uppercase font-bold tracking-wider text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">Educator Hub</span>
                   </div>
@@ -387,6 +390,7 @@ export default function AboutPage() {
                       <span className="w-2 h-2 rounded-full bg-amber-400" />
                       <span className="w-2 h-2 rounded-full bg-emerald-400" />
                       <span className="ml-2 text-slate-600 font-medium">classloop.ottodot.com/parent</span>
+                      <span className="ml-2 text-slate-600 font-medium">ottodot.winamus.com/parent</span>
                     </div>
                     <span className="text-[9px] uppercase font-bold tracking-wider text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Family Feed</span>
                   </div>
@@ -451,6 +455,7 @@ export default function AboutPage() {
                       <span className="w-2 h-2 rounded-full bg-amber-400" />
                       <span className="w-2 h-2 rounded-full bg-emerald-400" />
                       <span className="ml-2 text-slate-600 font-medium">classloop.ottodot.com/admin</span>
+                      <span className="ml-2 text-slate-600 font-medium">ottodot.winamus.com/admin</span>
                     </div>
                     <span className="text-[9px] uppercase font-bold tracking-wider text-teal-600 bg-teal-50 px-1.5 py-0.5 rounded">Admin Portal</span>
                   </div>
@@ -613,6 +618,7 @@ export default function AboutPage() {
                   </h4>
                   <p className="text-xs text-slate-600 leading-relaxed">
                     Database schema tenant isolation (`tenant_id` / organization schemas) allowing white-label deployment for school districts, private academies, and franchise partners with custom subdomains (`school.classloop.dev`).
+                    Database schema tenant isolation (`tenant_id` / organization schemas) allowing white-label deployment for school districts, private academies, and franchise partners with custom subdomains (`school.ottodot.winamus.com`).
                   </p>
                 </div>
 
