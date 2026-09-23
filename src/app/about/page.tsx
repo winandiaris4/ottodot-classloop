@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Metadata } from 'next'
 import {
   Rocket,
@@ -125,6 +126,34 @@ export default function AboutPage() {
               Explore Course Catalog <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
+
+          {/* Platform Screenshot Showcase Mockup */}
+          <div className="pt-8 max-w-4xl mx-auto">
+            <div className="rounded-3xl overflow-hidden border border-indigo-500/30 bg-slate-900/90 backdrop-blur-xl shadow-2xl shadow-indigo-950/80 group text-left">
+              <div className="flex items-center justify-between px-4 py-3 bg-slate-900/95 border-b border-indigo-950 text-xs text-slate-400 font-mono">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                  <span className="ml-3 text-indigo-300 text-[11px] font-sans font-medium">classloop.ottodot.com • Playful STEM Learning Hub</span>
+                </div>
+                <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-400 uppercase tracking-wider bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-800/60">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Live Platform Preview
+                </span>
+              </div>
+              <div className="overflow-hidden bg-slate-950">
+                <Image
+                  src="/images/screenshoot/landingpage.png"
+                  alt="ClassLoop Landing Page Interface Preview"
+                  width={962}
+                  height={921}
+                  className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-[1.01]"
+                  priority
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Organic Wave Transition */}
@@ -207,7 +236,30 @@ export default function AboutPage() {
                     </div>
                   </div>
                 </div>
-                <ul className="space-y-3">
+
+                {/* Screenshot Preview */}
+                <div className="rounded-2xl overflow-hidden border border-indigo-100/80 bg-slate-50 shadow-inner group">
+                  <div className="flex items-center justify-between px-3 py-1.5 bg-slate-100/90 border-b border-slate-200 text-[10px] text-slate-400 font-mono">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-rose-400" />
+                      <span className="w-2 h-2 rounded-full bg-amber-400" />
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                      <span className="ml-2 text-slate-600 font-medium">classloop.ottodot.com/student</span>
+                    </div>
+                    <span className="text-[9px] uppercase font-bold tracking-wider text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">Learner View</span>
+                  </div>
+                  <div className="overflow-hidden bg-slate-100">
+                    <Image
+                      src="/images/screenshoot/student-dashboard.png"
+                      alt="ClassLoop Student Portal Dashboard"
+                      width={1898}
+                      height={869}
+                      className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                    />
+                  </div>
+                </div>
+
+                <ul className="space-y-3 pt-1">
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <div className="text-xs text-slate-600 leading-relaxed">
@@ -255,7 +307,30 @@ export default function AboutPage() {
                     </div>
                   </div>
                 </div>
-                <ul className="space-y-3">
+
+                {/* Screenshot Preview */}
+                <div className="rounded-2xl overflow-hidden border border-rose-100/80 bg-slate-50 shadow-inner group">
+                  <div className="flex items-center justify-between px-3 py-1.5 bg-slate-100/90 border-b border-slate-200 text-[10px] text-slate-400 font-mono">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-rose-400" />
+                      <span className="w-2 h-2 rounded-full bg-amber-400" />
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                      <span className="ml-2 text-slate-600 font-medium">classloop.ottodot.com/teacher</span>
+                    </div>
+                    <span className="text-[9px] uppercase font-bold tracking-wider text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">Educator Hub</span>
+                  </div>
+                  <div className="overflow-hidden bg-slate-100">
+                    <Image
+                      src="/images/screenshoot/teacher-dashboard.png"
+                      alt="ClassLoop Teacher Hub Classroom Management UI"
+                      width={1904}
+                      height={674}
+                      className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                    />
+                  </div>
+                </div>
+
+                <ul className="space-y-3 pt-1">
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <div className="text-xs text-slate-600 leading-relaxed">
@@ -303,7 +378,30 @@ export default function AboutPage() {
                     </div>
                   </div>
                 </div>
-                <ul className="space-y-3">
+
+                {/* Screenshot Preview */}
+                <div className="rounded-2xl overflow-hidden border border-amber-100/80 bg-slate-50 shadow-inner group">
+                  <div className="flex items-center justify-between px-3 py-1.5 bg-slate-100/90 border-b border-slate-200 text-[10px] text-slate-400 font-mono">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-rose-400" />
+                      <span className="w-2 h-2 rounded-full bg-amber-400" />
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                      <span className="ml-2 text-slate-600 font-medium">classloop.ottodot.com/parent</span>
+                    </div>
+                    <span className="text-[9px] uppercase font-bold tracking-wider text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Family Feed</span>
+                  </div>
+                  <div className="overflow-hidden bg-slate-100">
+                    <Image
+                      src="/images/screenshoot/parent-dashboard.png"
+                      alt="ClassLoop Parent Portal Multi-Child Monitoring UI"
+                      width={1904}
+                      height={674}
+                      className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                    />
+                  </div>
+                </div>
+
+                <ul className="space-y-3 pt-1">
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <div className="text-xs text-slate-600 leading-relaxed">
@@ -344,7 +442,30 @@ export default function AboutPage() {
                     </div>
                   </div>
                 </div>
-                <ul className="space-y-3">
+
+                {/* Screenshot Preview */}
+                <div className="rounded-2xl overflow-hidden border border-teal-100/80 bg-slate-50 shadow-inner group">
+                  <div className="flex items-center justify-between px-3 py-1.5 bg-slate-100/90 border-b border-slate-200 text-[10px] text-slate-400 font-mono">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-rose-400" />
+                      <span className="w-2 h-2 rounded-full bg-amber-400" />
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                      <span className="ml-2 text-slate-600 font-medium">classloop.ottodot.com/admin</span>
+                    </div>
+                    <span className="text-[9px] uppercase font-bold tracking-wider text-teal-600 bg-teal-50 px-1.5 py-0.5 rounded">Admin Portal</span>
+                  </div>
+                  <div className="overflow-hidden bg-slate-100">
+                    <Image
+                      src="/images/screenshoot/admin-dashboard.png"
+                      alt="ClassLoop Admin Operations & Analytics UI"
+                      width={839}
+                      height={933}
+                      className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                    />
+                  </div>
+                </div>
+
+                <ul className="space-y-3 pt-1">
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <div className="text-xs text-slate-600 leading-relaxed">
