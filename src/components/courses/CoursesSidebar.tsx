@@ -24,7 +24,7 @@ const NAV_ITEMS = [
   { label: 'My Learning', href: '/student/dashboard', icon: BookOpen },
   { label: 'Assignments', href: '/student/homework', icon: ClipboardList },
   { label: 'Progress', href: '/parent/dashboard', icon: BarChart2 },
-  { label: 'Messages', href: '#', icon: MessageSquare },
+  { label: 'About ClassLoop', href: '/about', icon: Sparkles },
 ]
 
 export function CoursesSidebar({ className = '' }: SidebarProps) {

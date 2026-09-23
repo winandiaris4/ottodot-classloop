@@ -52,8 +52,8 @@ export default async function LandingPage() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-300">
-            <a href="#courses" className="hover:text-emerald-300 transition-colors">Courses</a>
-            <a href="#features" className="hover:text-emerald-300 transition-colors">Features</a>
+            <Link href="/courses" className="hover:text-emerald-300 transition-colors">Courses</Link>
+            <Link href="/about" className="hover:text-emerald-300 transition-colors">About</Link>
             <a href="#roles" className="hover:text-emerald-300 transition-colors">Roles</a>
             <a href="#pricing" className="hover:text-emerald-300 transition-colors">Pricing</a>
           </nav>
@@ -611,10 +611,18 @@ export default async function LandingPage() {
           </div>
 
           <div className="flex items-center gap-6 text-slate-300 font-medium">
-            <a href="#courses" className="hover:text-emerald-300 transition-colors">Courses</a>
+            <Link href="/courses" className="hover:text-emerald-300 transition-colors">Courses</Link>
+            <Link href="/about" className="hover:text-emerald-300 transition-colors">About</Link>
             <a href="#roles" className="hover:text-emerald-300 transition-colors">Roles</a>
             <a href="#pricing" className="hover:text-emerald-300 transition-colors">Pricing</a>
-            <Link href="/login" className="hover:text-emerald-300 transition-colors">Sign In</Link>
+            <a
+              href="https://github.com/winandiaris4/ottodot-classloop"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-emerald-300 transition-colors"
+            >
+              GitHub
+            </a>
           </div>
 
           <div className="text-slate-500 text-center sm:text-right">
