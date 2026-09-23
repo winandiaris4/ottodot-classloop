@@ -44,21 +44,27 @@
 | 015 | `DONE` | `HIGH` | `Frontend` | Enterprise Header & Navigation Polish: Consolidated Profile Dropdown & Clean Sidebar | 005, 009 |
 | 016 | `DONE` | `HIGH` | `Frontend` | Enterprise User Management UI: Data Density, Masked UUIDs, Action Hierarchy & Table Pagination | 009, 015 |
 | 017 | `DONE` | `HIGH` | `Frontend` | Enterprise Dashboard Redesign: Clean Page Header, Consolidated Metrics & KPI Visuals | 009, 015 |
+| 018 | `DONE` | `HIGH` | `Frontend` | Playful STEM EdTech Landing Page Redesign (Cosmic Hero, Mascot & Bright Course Showcase) | 017 |
+| 019 | `DONE` | `HIGH` | `Frontend` | Course Catalog Hub (/courses) & Interactive Course Detail Page (/courses/[id]) | 018 |
 
 ---
 
 ## 📋 Backlog
-> 💡 **Panduan AI**: Baris-baris ini hanya ide fitur/tugas masa depan. **DILARANG** membuat file `.md` untuk item di bawah ini sampai dipromosikan menjadi Active Task.
+> 💡 **Panduan AI**: Baris-baris ini adalah ide fitur masa depan. Detail arsitektur & RICE scoring tersimpan di [feature-backlog-roadmap.md](file:///home/aris/aris/Project/ottodot/document-as-code/brainstorming/feature-backlog-roadmap.md). **DILARANG** membuat file `.md` untuk item di bawah ini sampai dipromosikan menjadi Active Task.
 
 | ID  | Judul Ide / Fitur Masa Depan | Kategori | Urgensi | Catatan / Deskripsi Singkat |
 | --- | ---------------------------- | -------- | ------- | --------------------------- |
-| B01 | Real-time notifikasi via Supabase Realtime | `Backend` | `LOW` | Upgrade dari polling ke WebSocket push |
-| B02 | Export laporan ke CSV | `Frontend` | `LOW` | Admin download laporan completion rate |
-| B03 | Dark Mode | `Frontend` | `LOW` | CSS variables + Tailwind dark class |
-| B04 | File preview untuk submission homework | `Frontend` | `LOW` | Preview PDF/image inline tanpa download |
-| B05 | Unit & Integration Tests | `QA` | `MEDIUM` | Vitest untuk server logic, Playwright untuk e2e |
+| B01 | Direct File Upload & Supabase Storage | `Storage` | `HIGH` | Upload materi PDF/slides & lampiran submission homework |
+| B02 | Class Attendance & Live Session Launcher | `Frontend/Backend` | `HIGH` | Presensi siswa (P/A/L/E) & 1-click launcher Zoom/Meet |
+| B03 | Teacher-Parent Progress Notes & Feedback | `Communication` | `MEDIUM` | Catatan perkembangan berkala anak & parent timeline feed |
+| B04 | Export Laporan & Raport (CSV / Excel / PDF) | `Reports` | `MEDIUM` | Download CSV data admin & generate Student Report Card PDF |
+| B05 | Admin Course & Plan Builder GUI | `Admin` | `MEDIUM` | CRUD Visual courses, modules, & Stripe pricing tier mapping |
+| B06 | Real-time Push Notifications (Supabase Realtime) | `Backend` | `LOW` | WebSocket push alert instant tanpa refresh halaman |
+| B07 | Gamification & Badges (XP / Streaks) | `Gamification` | `LOW` | Sistem poin keaktifan, streak kelas & lencana pencapaian |
+| B08 | Dark Mode & Theme Switcher | `Frontend` | `LOW` | CSS variables + Tailwind dark class |
+| B09 | Automated QA Suite (Vitest + Playwright) | `QA` | `MEDIUM` | Vitest untuk server logic, Playwright untuk e2e testing |
 
 ---
 
-*Last updated: 2026-09-22*
+*Last updated: 2026-09-23 (Synced with feature-backlog-roadmap.md)*
 
