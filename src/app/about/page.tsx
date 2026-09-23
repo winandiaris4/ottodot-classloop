@@ -196,6 +196,19 @@ export default function AboutPage() {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
                     <GraduationCap className="w-5 h-5" />
+              <div className="bg-white rounded-3xl p-6 border border-indigo-100 shadow-sm space-y-4 hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">
+                      <GraduationCap className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-black text-base text-slate-900">1. Student Portal</h3>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <code className="text-[11px] font-mono font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">/student</code>
+                        <span className="text-[11px] text-slate-400 font-medium">• student@demo.com</span>
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <h3 className="font-extrabold text-base text-slate-900">1. Student Portal (`/student`)</h3>
@@ -204,20 +217,41 @@ export default function AboutPage() {
                 </div>
                 <ul className="space-y-2 text-xs text-slate-600">
                   <li className="flex items-start gap-2">
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Dashboard Metrics:</strong> Enrolled courses, graded tasks count, average grade %, and next live session.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Dashboard Metrics: </strong>
+                      Enrolled courses, graded tasks count, average grade %, and next scheduled live session.
+                    </div>
                   </li>
                   <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Homework Portal (`/student/homework`):</strong> Filter tasks by status (To Do, Under Review, Graded).
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Homework Portal (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">/student/homework</code>): </strong>
+                      Filter tasks by status (To Do, Under Review, Graded) and track deadlines.
+                    </div>
                   </li>
                   <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Submission Workspace:</strong> Submit rich responses, inspect score rubrics and personalized teacher feedback.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Submission Workspace: </strong>
+                      Submit rich text responses, inspect rubric criteria, and read personalized teacher feedback.
+                    </div>
                   </li>
                   <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Class Schedule (`/student/schedule`):</strong> Live timetable with countdowns to interactive meetings.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Class Schedule (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">/student/schedule</code>): </strong>
+                      Live timetable calendar with automated countdowns to interactive meetings.
+                    </div>
                   </li>
                 </ul>
               </div>
@@ -227,6 +261,19 @@ export default function AboutPage() {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center">
                     <School className="w-5 h-5" />
+              <div className="bg-white rounded-3xl p-6 border border-rose-100 shadow-sm space-y-4 hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold">
+                      <School className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-black text-base text-slate-900">2. Teacher Hub</h3>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <code className="text-[11px] font-mono font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded">/teacher</code>
+                        <span className="text-[11px] text-slate-400 font-medium">• teacher@demo.com</span>
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <h3 className="font-extrabold text-base text-slate-900">2. Teacher Hub (`/teacher`)</h3>
@@ -235,16 +282,39 @@ export default function AboutPage() {
                 </div>
                 <ul className="space-y-2 text-xs text-slate-600">
                   <li className="flex items-start gap-2">
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Classroom Cohorts (`/teacher/classes`):</strong> Create cohorts, manage student rosters, and monitor capacity.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Classroom Cohorts (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">/teacher/classes</code>): </strong>
+                      Create cohorts, manage student rosters, and monitor live seat capacity.
+                    </div>
                   </li>
                   <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Assignment Creator (`/teacher/homework`):</strong> Publish homework with deadlines, instructions, and score scales.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Assignment Creator (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">/teacher/homework</code>): </strong>
+                      Publish homework with deadlines, rich instructions, and customized score scales.
+                    </div>
                   </li>
                   <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Split-View Grading Suite:</strong> Inspect student work side-by-side, input numerical scores, and write formative guidance.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Split-View Grading Suite: </strong>
+                      Inspect student submissions side-by-side, input numerical scores, and write formative feedback.
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Class Timetable (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">/teacher/schedule</code>): </strong>
+                      Overview of live sessions across all taught cohorts with direct meeting links.
+                    </div>
                   </li>
                 </ul>
               </div>
@@ -254,6 +324,19 @@ export default function AboutPage() {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
                     <HeartHandshake className="w-5 h-5" />
+              <div className="bg-white rounded-3xl p-6 border border-amber-100 shadow-sm space-y-4 hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold">
+                      <HeartHandshake className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-black text-base text-slate-900">3. Parent Visibility</h3>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <code className="text-[11px] font-mono font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">/parent</code>
+                        <span className="text-[11px] text-slate-400 font-medium">• parent@demo.com</span>
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <h3 className="font-extrabold text-base text-slate-900">3. Parent Visibility (`/parent`)</h3>
@@ -262,16 +345,32 @@ export default function AboutPage() {
                 </div>
                 <ul className="space-y-2 text-xs text-slate-600">
                   <li className="flex items-start gap-2">
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Family Dashboard:</strong> Aggregated completion %, average scores, and recent teacher remarks across all children.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Family Dashboard: </strong>
+                      Aggregated completion percentage, average grades, and recent teacher remarks across all children.
+                    </div>
                   </li>
                   <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Child Report Cards (`/parent/children`):</strong> Granular performance reports per child and assignment history.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Child Report Cards (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">/parent/children</code>): </strong>
+                      Granular performance reports per child with complete assignment history and evaluation breakdown.
+                    </div>
                   </li>
                   <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Consolidated Schedule (`/parent/schedule`):</strong> Single timeline calendar of all children&apos;s live classes.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Consolidated Schedule (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">/parent/schedule</code>): </strong>
+                      Single unified calendar tracking upcoming live classes across all enrolled siblings.
+                    </div>
                   </li>
                 </ul>
               </div>
@@ -281,6 +380,19 @@ export default function AboutPage() {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center">
                     <ShieldCheck className="w-5 h-5" />
+              <div className="bg-white rounded-3xl p-6 border border-teal-100 shadow-sm space-y-4 hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center font-bold">
+                      <ShieldCheck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-black text-base text-slate-900">4. Admin Operations</h3>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <code className="text-[11px] font-mono font-bold text-teal-600 bg-teal-50 px-1.5 py-0.5 rounded">/admin</code>
+                        <span className="text-[11px] text-slate-400 font-medium">• admin@demo.com</span>
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <h3 className="font-extrabold text-base text-slate-900">4. Admin Operations (`/admin`)</h3>
@@ -289,20 +401,41 @@ export default function AboutPage() {
                 </div>
                 <ul className="space-y-2 text-xs text-slate-600">
                   <li className="flex items-start gap-2">
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Executive Dashboard:</strong> 12-Month responsive enrollment trajectory charts (`ResizeObserver`), KPI tiles, and shortcuts.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Executive Dashboard: </strong>
+                      12-Month responsive enrollment trajectory charts (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">ResizeObserver</code>), KPI tiles, and system shortcuts.
+                    </div>
                   </li>
                   <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>User Management (`/admin/users`):</strong> User directory, masked UUIDs, role filters, and Parent-Student link modal.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">User Management (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">/admin/users</code>): </strong>
+                      Full user directory with role filters, masked UUIDs, and Parent-Student link modal.
+                    </div>
                   </li>
                   <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Enrollment Manager (`/admin/enrollments`):</strong> Direct enrollment and optimistic status toggles (`active`, `completed`, `cancelled`, `expired`).
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Enrollment Manager (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">/admin/enrollments</code>): </strong>
+                      Direct course enrollment and optimistic status toggles (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">active</code>, <code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">completed</code>, <code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">cancelled</code>, <code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">expired</code>).
+                    </div>
                   </li>
                   <li className="flex items-start gap-2">
+                  <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                     <strong>Platform Reports (`/admin/reports`):</strong> Turnaround times and class completion metrics.
+                    <div className="text-xs text-slate-600 leading-relaxed">
+                      <strong className="font-bold text-slate-900">Platform Reports (<code className="text-[10px] bg-slate-100 px-1 py-0.5 rounded font-mono">/admin/reports</code>): </strong>
+                      Grading turnaround times and class completion metrics across cohorts.
+                    </div>
                   </li>
                 </ul>
               </div>
